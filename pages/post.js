@@ -1,12 +1,16 @@
 import {withRouter} from 'next/router';
 import Layout from '../components/Layout';
 
-const Page = withRouter((props) => (
-    <Layout>
+const Content = withRouter((props) => (
+    <div>
         <h1>{props.router.query.title}</h1>
-        <p>{`props.router ${props.router}`}</p>
-        <p>{`props.router.query ${props.router.query}`}</p>
-    </Layout>
+    </div>
 ));
+
+const Page = (props) => (
+    <Layout>
+        <Content/>
+    </Layout>
+);
 
 export default Page;
