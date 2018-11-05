@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Layout from '../components/Layout';
 
 const buttonStyle = {
     fontSize: '20px',
@@ -11,7 +12,7 @@ const buttonStyle = {
 
 export default () => {
     return (
-        <div>
+        <Layout>
             <p>Hello Next.JS!</p>
             <Link href={'/about'}>
                 <a style={buttonStyle}>About Page</a>
@@ -19,6 +20,6 @@ export default () => {
             <Link href={'/about'}>
                 <button>Go to About Page</button>
             </Link>
-        </div>
+        </Layout>
     );
 };
