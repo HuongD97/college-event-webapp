@@ -14,7 +14,6 @@ const styles = theme => ({
         flexGrow: 1,
     },
     paper: {
-        padding: theme.spacing.unit * 2,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -66,13 +65,13 @@ const Home = props => {
                             </CardContent>
                         </CardContent>
                         <CardActions className={classes.actionContainer}>
-                            <Link href="/login">
+                            <Link href={"/login"}>
                                 <Button variant={'contained'} color={'primary'}>
                                     Login
                                 </Button>
                             </Link>
                             <div />
-                            <Link href="/register">
+                            <Link href={"/register"}>
                                 <Button variant={'contained'} color={'primary'}>
                                     Register
                                 </Button>
