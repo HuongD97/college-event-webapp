@@ -11,17 +11,6 @@ const handle = app.getRequestHandler();
 app.prepare()
     .then(() => {
         const server = express();
-
-        // server.get('/p/:id', (req, res) => {
-        //     const actualPage = '/post';
-        //     const queryParams = { title: req.params.id };
-        //
-        //     // Not sure what this line is doing. But pretty
-        //     // sure it's routing the incoming request to the masked
-        //     // route to the actual route
-        //     app.render(req, res, actualPage, queryParams);
-        // });
-
         server.get('*', (req, res) => {
             return handle(req, res);
         });
