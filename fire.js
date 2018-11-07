@@ -11,7 +11,7 @@ const config = {
     messagingSenderId: env.messagingSenderId,
 };
 
-
+// a difference
 const fire = !firebase.apps.length
     ? firebase.initializeApp(config)
     : firebase.app();
