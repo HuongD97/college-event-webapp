@@ -10,7 +10,7 @@ const config = {
     storageBucket: env.REACT_APP_storageBucket,
     messagingSenderId: env.messagingSenderId,
 };
-
+// changy change
 
 const fire = !firebase.apps.length
     ? firebase.initializeApp(config)
