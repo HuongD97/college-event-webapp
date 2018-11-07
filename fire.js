@@ -10,8 +10,8 @@ const config = {
     storageBucket: env.REACT_APP_storageBucket,
     messagingSenderId: env.messagingSenderId,
 };
-// changy change
-
+// commits to dev should not be reflected
+// in github commit graph
 const fire = !firebase.apps.length
     ? firebase.initializeApp(config)
     : firebase.app();
