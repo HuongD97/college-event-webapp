@@ -11,6 +11,7 @@ import FormContainer from '../components/FormContainer';
 import classNames from 'classnames';
 import { signIn } from '../services/accounts';
 import Router from 'next/router';
+import axios from 'axios';
 
 const styles = theme => ({
     textField: {
@@ -38,11 +39,7 @@ class Login extends Component {
     handleSubmit = async () => {
         try {
             const result = await signIn(this.state.email, this.state.password);
-            console.log(`${JSON.stringify(result)}`);
-            Router.push({
-                pathname: '/loggedIn',
-                query: { uid: result.user.uid },
-            });
+            Router.push(`/user?uid=${result.user.uid}`);
         } catch (error) {
             console.error(error);
         }

@@ -52,26 +52,51 @@ class Register extends Component {
         this.setState(state => ({ showPassword: !state.showPassword }));
     };
 
+    handleSubmit = async () => {
+        try {
+            const uid = await create(this.state.email, this.state.password);
+            const result = await axios.get('/create', {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                uid: uid,
+            });
+
+            if (result.success) {
+                Router.push('/login');
+            } else {
+                this.setState({ errorMessage: 'Could not create user' });
+            }
+        } catch (e) {
+            console.error(JSON.stringify(e));
+        }
+        // Router.push('/create', {
+        //     firstName: this.state.firstName,
+        //     lastName: this.state.lastName,
+        //     email: this.state.email,
+        //     uid: uid
+        // });
+    };
+
     render() {
         const { classes } = this.props;
-        console.log(this.state);
         return (
-            <FormContainer title='Sign Up'>
+            <FormContainer title="Sign Up">
                 <TextField
-                  label="First Name"
-                  className={classNames(classes.textField)}
-                  type="text"
-                  name="firstName"
-                  value={this.state.firstName}
-                  onChange={this.handleChange('firstName')}
+                    label="First Name"
+                    className={classNames(classes.textField)}
+                    type="text"
+                    name="firstName"
+                    value={this.state.firstName}
+                    onChange={this.handleChange('firstName')}
                 />
                 <TextField
-                  label="Last Name"
-                  className={classNames(classes.textField)}
-                  type="text"
-                  name="lastName"
-                  value={this.state.lastName}
-                  onChange={this.handleChange('lastName')}
+                    label="Last Name"
+                    className={classNames(classes.textField)}
+                    type="text"
+                    name="lastName"
+                    value={this.state.lastName}
+                    onChange={this.handleChange('lastName')}
                 />
                 <TextField
                     label="Email"
@@ -105,7 +130,14 @@ class Register extends Component {
                         ),
                     }}
                 />
-                <Button variant="outlined" color="primary">Sign Up</Button>
+                {(this.state.errorMessage ? <span>{this.state.errorMessage}</span> : null)}
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={this.handleSubmit}
+                >
+                    Sign Up
+                </Button>
             </FormContainer>
         );
     }

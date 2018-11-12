@@ -5,6 +5,7 @@ const create = async (email, password) => {
     if (!username || !password) {
         throw `No username or password was given!`;
     }
+    console.log('hey hey hey');
 
     return fire
         .auth()
