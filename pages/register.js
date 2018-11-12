@@ -25,6 +25,8 @@ class Register extends Component {
             userID: null,
             email: '',
             password: '',
+            firstName: '',
+            lastName: '',
             errorCode: null,
             errorMessage: null,
             showPassword: false,
@@ -55,6 +57,22 @@ class Register extends Component {
         console.log(this.state);
         return (
             <FormContainer title='Sign Up'>
+                <TextField
+                  label="First Name"
+                  className={classNames(classes.textField)}
+                  type="text"
+                  name="firstName"
+                  value={this.state.firstName}
+                  onChange={this.handleChange('firstName')}
+                />
+                <TextField
+                  label="Last Name"
+                  className={classNames(classes.textField)}
+                  type="text"
+                  name="lastName"
+                  value={this.state.lastName}
+                  onChange={this.handleChange('lastName')}
+                />
                 <TextField
                     label="Email"
                     className={classNames(classes.textField)}
