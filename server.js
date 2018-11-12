@@ -1,6 +1,5 @@
 const express = require('express');
 const next = require('next');
-
 // Check if we're in the dev environment or production
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -11,6 +10,10 @@ const handle = app.getRequestHandler();
 app.prepare()
     .then(() => {
         const server = express();
+        server.get('/api/whoot', (req, res) => {
+            res.json({ text: 'hello1' });
+        });
+
         server.get('*', (req, res) => {
             return handle(req, res);
         });
