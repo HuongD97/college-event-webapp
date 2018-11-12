@@ -9,6 +9,8 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
 import FormContainer from '../components/FormContainer';
 import classNames from 'classnames';
+import { signIn } from '../services/accounts';
+import Router from 'next/router';
 
 const styles = theme => ({
     textField: {
@@ -31,6 +33,19 @@ class Login extends Component {
 
     handleChange = prop => event => {
         this.setState({ [prop]: event.target.value });
+    };
+
+    handleSubmit = async () => {
+        try {
+            const result = await signIn(this.state.email, this.state.password);
+            console.log(`${JSON.stringify(result)}`);
+            Router.push({
+                pathname: '/loggedIn',
+                query: { uid: result.user.uid },
+            });
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     render() {
@@ -69,7 +84,11 @@ class Login extends Component {
                         ),
                     }}
                 />
-                <Button variant="outlined" color="primary">
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={this.handleSubmit}
+                >
                     Sign In
                 </Button>
             </FormContainer>

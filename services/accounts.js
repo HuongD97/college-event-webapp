@@ -1,18 +1,32 @@
 import fire from '../fire';
 
 // Function that creates an account via firebase auth
-const create = async (username, password) => {
+const create = async (email, password) => {
     if (!username || !password) {
         throw `No username or password was given!`;
     }
 
     return fire
         .auth()
-        .createUserWithEmailAndPassword(username, password)
+        .createUserWithEmailAndPassword(email, password)
         .then(success => success.user.uid)
         .catch(err => {
             throw err;
         });
 };
 
-export { create };
+const signIn = async (email, password) => {
+    if (!email || !password) {
+        throw `No username or password was given!`;
+    }
+
+    return fire
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(success => success)
+        .catch(err => {
+            throw err;
+        });
+};
+
+export { create, signIn };
