@@ -5,6 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import CardActions from '@material-ui/core/CardActions';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
@@ -34,7 +35,7 @@ const styles = theme => ({
 const Home = props => {
     const { classes } = props;
     return (
-        <div className={classes.root}>
+        <div className={classNames(classes.root)}>
             <Grid
                 container
                 spacing={0}
@@ -44,10 +45,10 @@ const Home = props => {
                 style={{ minHeight: '100vh' }}
             >
                 <Grid item>
-                    <Card className={classes.card}>
+                    <Card className={classNames(classes.card)}>
                         <CardContent>
                             <CardMedia
-                                className={classes.media}
+                                className={classNames(classes.media)}
                                 image={'../static/wonderment.jpeg'}
                                 title={'Discover the world'}
                             />
@@ -64,7 +65,7 @@ const Home = props => {
                                 </Typography>
                             </CardContent>
                         </CardContent>
-                        <CardActions className={classes.actionContainer}>
+                        <CardActions className={classNames(classes.actionContainer)}>
                             <Link href={"/login"}>
                                 <Button variant={'contained'} color={'primary'}>
                                     Login
