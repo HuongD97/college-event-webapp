@@ -10,7 +10,6 @@ const config = {
     messagingSenderId: process.env.messagingSenderId,
 };
 
-// a difference
 const fire = !firebase.apps.length
     ? firebase.initializeApp(config)
     : firebase.app();
