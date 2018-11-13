@@ -11,13 +11,6 @@ const jsonParser = bodyParser.json();
 const Users = require('./model/Users');
 const database = require('./db');
 
-const db = mysql.createConnection({
-    host: process.env.host,
-    user: process.env.user,
-    password: process.env.password,
-    database: process.env.database,
-});
-
 const handle = app.getRequestHandler();
 
 app.prepare()
@@ -39,19 +32,6 @@ app.prepare()
             Users.create(firstName, lastName, email, uid, result =>
                 res.json(result),
             );
-
-            //
-            // const retVal = {};
-            // const query = `INSERT INTO Users (firstName, lastName, email, uid) VALUES ('${firstName}', '${lastName}', '${email}', '${uid}')`;
-
-            // return db
-            //     .query(query)
-            //     .on('error', err => (retVal.error = err))
-            //     .on('result', result => {
-            //         console.log(result);
-            //         retVal.success = true;
-            //     })
-            //     .on('end', () => res.json(retVal));
         });
 
         server.get('/allUsers', (req, res) => {
@@ -78,7 +58,7 @@ app.prepare()
             return handle(req, res);
         });
 
-        server.listen(3000, err => {
+        server.listen(PORT, err => {
             if (err) throw err;
             console.log('> Read on http://localhost:3000');
         });
