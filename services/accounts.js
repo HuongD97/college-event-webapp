@@ -30,4 +30,12 @@ const signIn = async (email, password) => {
         });
 };
 
-export { create, signIn };
+const getCurrentUser = () => {
+    return fire.auth().currentUser;
+};
+
+const signOut = () => {
+    return fire.auth().signOut();
+};
+
+export { create, signIn, signOut, getCurrentUser};
