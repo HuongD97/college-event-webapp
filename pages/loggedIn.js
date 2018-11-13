@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'next/router';
+import { getCurrentUser } from '../services/accounts';
 
 class LoggedIn extends Component {
     constructor(props) {
@@ -9,8 +10,14 @@ class LoggedIn extends Component {
             firstName: firstName,
             lastName: lastName,
             email: email,
-            uid: uid
-        }
+            uid: uid,
+        };
+    }
+
+    componentDidMount() {
+        getCurrentUser()
+            .then(uid => this.setState({ uid: uid}))
+            .catch(err => console.log('ERRROr', err));
     }
 
     render() {

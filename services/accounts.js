@@ -31,11 +31,19 @@ const signIn = async (email, password) => {
 };
 
 const getCurrentUser = () => {
-    return fire.auth().currentUser;
+    return new Promise((resolve, reject) => {
+        fire.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                resolve(user.uid);
+            } else {
+                reject({ error: `No user is currently logged in.`});
+            }
+        });
+    });
 };
 
 const signOut = () => {
     return fire.auth().signOut();
 };
 
-export { create, signIn, signOut, getCurrentUser};
+export { create, signIn, signOut, getCurrentUser };
