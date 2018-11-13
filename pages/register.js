@@ -11,6 +11,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
 import FormContainer from '../components/FormContainer';
 import classNames from 'classnames';
+import Router from 'next/router';
 
 const styles = theme => ({
     textField: {
@@ -55,27 +56,21 @@ class Register extends Component {
     handleSubmit = async () => {
         try {
             const uid = await create(this.state.email, this.state.password);
-            const result = await axios.get('/create', {
+            const result = await axios.post('/create', {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
                 email: this.state.email,
                 uid: uid,
             });
 
-            if (result.success) {
-                Router.push('/login');
+            if (result.data.success) {
+                Router.push('/login', { user: this.state });
             } else {
                 this.setState({ errorMessage: 'Could not create user' });
             }
         } catch (e) {
-            console.error(JSON.stringify(e));
+            console.error(e);
         }
-        // Router.push('/create', {
-        //     firstName: this.state.firstName,
-        //     lastName: this.state.lastName,
-        //     email: this.state.email,
-        //     uid: uid
-        // });
     };
 
     render() {
