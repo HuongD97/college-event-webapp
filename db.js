@@ -21,6 +21,5 @@ exports.connect = () => {
 };
 
 exports.get = () => {
-    console.log(`state.pool ${state.pool}`);
     return state.pool;
 };
