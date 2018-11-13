@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import FormContainer from '../components/FormContainer';
 import classNames from 'classnames';
 import Router from 'next/router';
+import ErrorMessage from "../components/Error";
 
 const styles = theme => ({
     textField: {
@@ -28,22 +29,10 @@ class Register extends Component {
             password: '',
             firstName: '',
             lastName: '',
-            errorCode: null,
             errorMessage: null,
             showPassword: false,
         };
     }
-
-    handleRegistration = async () => {
-        try {
-            const res = await create('huonghuong@gmail.com', '12345678');
-            console.log(`res ${res}`);
-            console.log('wait da minute');
-        } catch (e) {
-            this.setState({ errorCode: e.code, errorMessage: e.message });
-            console.log(e);
-        }
-    };
 
     handleChange = prop => event => {
         this.setState({ [prop]: event.target.value });
@@ -66,10 +55,10 @@ class Register extends Component {
             if (result.data.success) {
                 Router.push('/login', { user: this.state });
             } else {
-                this.setState({ errorMessage: 'Could not create user' });
+                this.setState({ errorMessage: 'Could not add user to the database.' });
             }
-        } catch (e) {
-            console.error(e);
+        } catch (err) {
+            this.setState({ errorMessage: err.message })
         }
     };
 
@@ -125,7 +114,7 @@ class Register extends Component {
                         ),
                     }}
                 />
-                {(this.state.errorMessage ? <span>{this.state.errorMessage}</span> : null)}
+                <ErrorMessage message={this.state.errorMessage}/>
                 <Button
                     variant="outlined"
                     color="primary"
