@@ -2,7 +2,7 @@ import fire from '../fire';
 
 // Function that creates an account via firebase auth
 const create = async (email, password) => {
-    if (!username || !password) {
+    if (!email || !password) {
         throw `No username or password was given!`;
     }
     console.log('hey hey hey');
