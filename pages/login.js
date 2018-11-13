@@ -11,7 +11,7 @@ import FormContainer from '../components/FormContainer';
 import classNames from 'classnames';
 import { signIn } from '../services/accounts';
 import Router from 'next/router';
-import axios from 'axios';
+import ErrorMessage from '../components/Error';
 
 const styles = theme => ({
     textField: {
@@ -26,7 +26,6 @@ class Login extends Component {
             userID: null,
             email: '',
             password: '',
-            errorCode: null,
             errorMessage: null,
             showPassword: false,
         };
@@ -40,8 +39,18 @@ class Login extends Component {
         try {
             const result = await signIn(this.state.email, this.state.password);
             Router.push(`/user?uid=${result.user.uid}`);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            if (err.code === 'auth/user-not-found') {
+                this.setState({
+                    errorMessage: `${
+                        this.state.email
+                    } is not registered in our system.`,
+                });
+            } else {
+                this.setState({
+                    errorMessage: `${err.message}`,
+                });
+            }
         }
     };
 
@@ -81,6 +90,7 @@ class Login extends Component {
                         ),
                     }}
                 />
+                <ErrorMessage message={this.state.errorMessage} />
                 <Button
                     variant="outlined"
                     color="primary"
