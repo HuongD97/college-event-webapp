@@ -21,14 +21,15 @@ app.prepare()
         database.connect();
 
         server.post('/create', jsonParser, (req, res) => {
-            const { firstName, lastName, email, uid } = req.body;
-            if (!firstName || !lastName || !email || !uid) {
+            const { firstName, lastName, email, uid, university } = req.body;
+            console.log(req.body);
+            if (!firstName || !lastName || !email || !uid || !university) {
                 return res.status(500).json({
-                    error: `First name, last name, email, or uid is missing`,
+                    error: `First name, last name, email, university, or uid is missing`,
                 });
             }
 
-            Users.create(firstName, lastName, email, uid, result =>
+            Users.create(firstName, lastName, email, uid, university, result =>
                 res.json(result),
             );
         });
@@ -37,26 +38,32 @@ app.prepare()
             Users.getAll(result => res.json(result));
         });
 
-        server.get('/user', (req, res) => {
-            const dest = '/loggedIn';
-            const { uid } = req.query;
-
+        server.post('/user', jsonParser, (req, res) => {
+            const { uid } = req.body;
             if (!uid) {
                 return res.status(500).json({
-                    error: `No uid provided!`,
+                    error: `Must provide a uid.`,
                 });
             }
-            Users.getUser(uid, result => {
-                app.render(req, res, dest, { user: result.user });
+            Users.getUserAndRole(uid, (err, data) => {
+                if (err) res.json(err);
+                else res.json({ user: data });
             });
         });
 
         server.get('/test', (req, res) => {
-            Users.getUserAndRole(null, (err, data) => {
-                if (err) res.json(err);
-                else res.json({ data: data });
-            });
+            Users.getUserAndRole(
+                'HmIYKjmPmrY1H9babReo2iKywWT2',
+                (err, data) => {
+                    console.log('err', err);
+                    console.log('data', data);
+                    if (err) res.json(err);
+                    else res.json({ user: data });
+                },
+            );
         });
+
+        server.get('/', (req, res) => app.render(req, res, '/index'));
 
         server.get('*', (req, res) => {
             return handle(req, res);
