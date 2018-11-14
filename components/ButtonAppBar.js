@@ -26,9 +26,6 @@ function ButtonAppBar(props) {
       <div className={classes.root}>
           <AppBar position="static">
               <Toolbar>
-                  <Typography variant="h6" color="inherit" className={classes.grow}>
-                      Welcome!
-                  </Typography>
                   <Button color="inherit">Create RSO</Button>
                   <Button color="inherit">My RSOs</Button>
                   <Button color="inherit">RSOs</Button>
