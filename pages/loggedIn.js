@@ -14,6 +14,8 @@ const styles = {
         flexGrow: 1,
     },
 };
+
+const tabs = [];
 class LoggedIn extends Component {
     constructor(props) {
         super(props);
@@ -27,6 +29,7 @@ class LoggedIn extends Component {
             uid: uid,
             role: '',
             errorMessage: '',
+            showAccountInfo: true,
         };
     }
 
@@ -56,27 +59,48 @@ class LoggedIn extends Component {
         }
     };
 
+    renderAccountInfo = () => {
+        if (!this.state.showAccountInfo) {
+            return null;
+        }
+
+        return (
+            <div style={{ margin: '0px', padding: '0px' }}>
+                <Intro user={this.state} />
+                <Break height={15} />
+            </div>
+        );
+    };
+
+    toggleAccountInfo = () => {
+        this.setState({
+            showAccountInfo: !this.state.showAccountInfo,
+        });
+    };
+
     render() {
         return (
             <div style={styles.root}>
                 <AppBar position="static">
                     <Toolbar>
                         <Button color="inherit">Create RSO</Button>
-                        <Button color="inherit">My RSOs</Button>
-                        <Button color="inherit">RSOs</Button>
+                        <Button color="inherit">Join RSOs</Button>
                         <Button color="inherit">Events</Button>
                         <Button color="inherit">Create Event</Button>
+                        <Button
+                            color="inherit"
+                            onClick={this.toggleAccountInfo}
+                        >
+                            Account
+                        </Button>
                         <Button color="inherit" onClick={this.handleSignOut}>
                             Sign Out
                         </Button>
                     </Toolbar>
                 </AppBar>
                 <Break height={15} />
-                <Intro user={this.state} />
+                {this.renderAccountInfo()}
                 <Break height={15} />
-                <Card>
-                    <CardContent>hello</CardContent>
-                </Card>
             </div>
         );
     }
