@@ -1,20 +1,37 @@
 import React, { Component } from 'react';
 import { withRouter } from 'next/router';
+import { getCurrentUser } from '../services/accounts';
+import ButtonAppBar from '../components/ButtonAppBar';
 
 class LoggedIn extends Component {
     constructor(props) {
         super(props);
-        const { firstName, lastName, email, uid } = props.router.query.user;
+        const { firstName, lastName, email, uid, role} =
+            props.router.query.user || {};
         this.state = {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            uid: uid
-        }
+            firstName: firstName || 'Huong',
+            lastName: lastName || 'Dang',
+            email: email || 'huongd97@gmail.com',
+            uid: uid || '12345678',
+            role: role || 'student',
+        };
+    }
+
+    componentDidMount() {
+        getCurrentUser()
+            .then(uid => this.setState({ uid: uid }))
+            .catch(err => console.log('Error', err));
     }
 
     render() {
-        return <div>Welcome {this.state.firstName}!</div>;
+        return (
+            <div>
+                <ButtonAppBar
+                    name={this.state.firstName}
+                    role={this.state.role}
+                />
+            </div>
+        );
     }
 }
 

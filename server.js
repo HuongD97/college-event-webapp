@@ -4,19 +4,11 @@ const next = require('next');
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const PORT = process.env.PORT || 3000;
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 const Users = require('./model/Users');
 const database = require('./db');
-
-const db = mysql.createConnection({
-    host: process.env.host,
-    user: process.env.user,
-    password: process.env.password,
-    database: process.env.database,
-});
 
 const handle = app.getRequestHandler();
 
@@ -39,19 +31,6 @@ app.prepare()
             Users.create(firstName, lastName, email, uid, result =>
                 res.json(result),
             );
-
-            //
-            // const retVal = {};
-            // const query = `INSERT INTO Users (firstName, lastName, email, uid) VALUES ('${firstName}', '${lastName}', '${email}', '${uid}')`;
-
-            // return db
-            //     .query(query)
-            //     .on('error', err => (retVal.error = err))
-            //     .on('result', result => {
-            //         console.log(result);
-            //         retVal.success = true;
-            //     })
-            //     .on('end', () => res.json(retVal));
         });
 
         server.get('/allUsers', (req, res) => {
@@ -60,8 +39,6 @@ app.prepare()
 
         server.get('/user', (req, res) => {
             const dest = '/loggedIn';
-            const failDest = '/';
-            const retVal = { user: null, error: null };
             const { uid } = req.query;
 
             if (!uid) {
@@ -74,11 +51,18 @@ app.prepare()
             });
         });
 
+        server.get('/test', (req, res) => {
+            Users.getUserAndRole(null, (err, data) => {
+                if (err) res.json(err);
+                else res.json({ data: data });
+            });
+        });
+
         server.get('*', (req, res) => {
             return handle(req, res);
         });
 
-        server.listen(3000, err => {
+        server.listen(PORT, err => {
             if (err) throw err;
             console.log('> Read on http://localhost:3000');
         });

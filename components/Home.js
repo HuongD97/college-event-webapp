@@ -14,11 +14,6 @@ const styles = theme => ({
     root: {
         flexGrow: 1,
     },
-    paper: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-    },
     card: {
         maxWidth: 500,
     },
@@ -65,26 +60,33 @@ const Home = props => {
                                 </Typography>
                             </CardContent>
                         </CardContent>
-                        <CardActions className={classNames(classes.actionContainer)}>
-                            <Link href={"/login"}>
+                        <CardContent
+                            className={classNames(classes.actionContainer)}
+                        >
+                            <Link href={'/login'}>
                                 <Button variant={'contained'} color={'primary'}>
                                     Login
                                 </Button>
                             </Link>
-                            <div />
-                            <Link href={"/register"}>
+                            <div
+                                style={{
+                                    marginRight: '10px',
+                                    marginLeft: '10px',
+                                }}
+                            />
+                            <Link href={'/register'}>
                                 <Button variant={'contained'} color={'primary'}>
                                     Register
                                 </Button>
                             </Link>
-                        </CardActions>
+                        </CardContent>
                     </Card>
                 </Grid>
             </Grid>
         </div>
     );
 };
-
+//
 Home.propTypes = {
     classes: PropTypes.object.isRequired,
 };

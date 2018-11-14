@@ -5,7 +5,6 @@ const create = async (email, password) => {
     if (!email || !password) {
         throw `No username or password was given!`;
     }
-    console.log('hey hey hey');
 
     return fire
         .auth()
@@ -30,4 +29,30 @@ const signIn = async (email, password) => {
         });
 };
 
-export { create, signIn };
+const getCurrentUser = () => {
+    return new Promise((resolve, reject) => {
+        fire.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                resolve(user.uid);
+            } else {
+                reject({ error: `No user is currently logged in.` });
+            }
+        });
+    });
+};
+
+const signOut = () => {
+    return fire.auth().signOut();
+};
+
+const deleteUser = async callback => {
+    try {
+        const user = fire.auth().currentUser;
+        const result = await user.delete();
+        callback({ success: true });
+    } catch (e) {
+        console.log('Error deleting user from firebase:', e);
+    }
+};
+
+export { create, signIn, signOut, getCurrentUser, deleteUser };
