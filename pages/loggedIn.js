@@ -1,35 +1,82 @@
 import React, { Component } from 'react';
-import { withRouter } from 'next/router';
-import { getCurrentUser } from '../services/accounts';
+import Router, { withRouter } from 'next/router';
 import ButtonAppBar from '../components/ButtonAppBar';
+import { Card, CardContent, AppBar, Toolbar, Button } from '@material-ui/core';
+import ErrorMessage from '../components/Error';
+import axios from 'axios';
+import { assign, pick, keys } from 'lodash';
+import Intro from '../components/Intro';
+import Break from '../components/Break';
+import { signOut } from '../services/accounts';
 
+const styles = {
+    root: {
+        flexGrow: 1,
+    },
+};
 class LoggedIn extends Component {
     constructor(props) {
         super(props);
-        const { firstName, lastName, email, uid, role} =
-            props.router.query.user || {};
+        const { uid } = props.router.query;
+
         this.state = {
-            firstName: firstName || 'Huong',
-            lastName: lastName || 'Dang',
-            email: email || 'huongd97@gmail.com',
-            uid: uid || '12345678',
-            role: role || 'student',
+            firstName: '',
+            lastName: '',
+            email: '',
+            university: '',
+            uid: uid,
+            role: '',
+            errorMessage: '',
         };
     }
 
-    componentDidMount() {
-        getCurrentUser()
-            .then(uid => this.setState({ uid: uid }))
-            .catch(err => console.log('Error', err));
+    async componentDidMount() {
+        try {
+            const result = await axios.post('/user', {
+                uid: this.state.uid,
+            });
+            this.setState(
+                assign(
+                    {},
+                    this.state,
+                    pick(result.data.user || {}, keys(this.state)),
+                ),
+            );
+        } catch (e) {
+            console.log('Error getting user data from database.', e);
+        }
     }
+
+    handleSignOut = async () => {
+        try {
+            await signOut();
+            Router.push('/');
+        } catch (e) {
+            console.log('Error signing out.', e);
+        }
+    };
 
     render() {
         return (
-            <div>
-                <ButtonAppBar
-                    name={this.state.firstName}
-                    role={this.state.role}
-                />
+            <div style={styles.root}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Button color="inherit">Create RSO</Button>
+                        <Button color="inherit">My RSOs</Button>
+                        <Button color="inherit">RSOs</Button>
+                        <Button color="inherit">Events</Button>
+                        <Button color="inherit">Create Event</Button>
+                        <Button color="inherit" onClick={this.handleSignOut}>
+                            Sign Out
+                        </Button>
+                    </Toolbar>
+                </AppBar>
+                <Break height={15} />
+                <Intro user={this.state} />
+                <Break height={15} />
+                <Card>
+                    <CardContent>hello</CardContent>
+                </Card>
             </div>
         );
     }
