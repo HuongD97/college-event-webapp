@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { create } from '../services/accounts';
+import { create, deleteUser} from '../services/accounts';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -29,6 +29,7 @@ class Register extends Component {
             password: '',
             firstName: '',
             lastName: '',
+            university: '',
             errorMessage: null,
             showPassword: false,
         };
@@ -50,14 +51,21 @@ class Register extends Component {
                 lastName: this.state.lastName,
                 email: this.state.email,
                 uid: uid,
+                university: this.state.university
             });
 
             if (result.data.success) {
                 Router.push('/login', { user: this.state });
             } else {
+                // Delete user from Firebase auth when user was not successfully
+                // added to mysql database
+                await deleteUser((res) => console.log('User successfully deleted!'));
                 this.setState({ errorMessage: 'Could not add user to the database.' });
             }
         } catch (err) {
+            // Delete user from Firebase auth when user was not successfully
+            // added to mysql database
+            await deleteUser((res) => console.log('User successfully deleted!'));
             this.setState({ errorMessage: err.message })
         }
     };
@@ -81,6 +89,14 @@ class Register extends Component {
                     name="lastName"
                     value={this.state.lastName}
                     onChange={this.handleChange('lastName')}
+                />
+                <TextField
+                  label="University"
+                  className={classNames(classes.textField)}
+                  type="text"
+                  name="university"
+                  value={this.state.university}
+                  onChange={this.handleChange('university')}
                 />
                 <TextField
                     label="Email"
