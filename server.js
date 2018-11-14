@@ -4,7 +4,6 @@ const next = require('next');
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const PORT = process.env.PORT || 3000;
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
@@ -40,8 +39,6 @@ app.prepare()
 
         server.get('/user', (req, res) => {
             const dest = '/loggedIn';
-            const failDest = '/';
-            const retVal = { user: null, error: null };
             const { uid } = req.query;
 
             if (!uid) {
@@ -51,6 +48,13 @@ app.prepare()
             }
             Users.getUser(uid, result => {
                 app.render(req, res, dest, { user: result.user });
+            });
+        });
+
+        server.get('/test', (req, res) => {
+            Users.getUserAndRole(null, (err, data) => {
+                if (err) res.json(err);
+                else res.json({ data: data });
             });
         });
 
