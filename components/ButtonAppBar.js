@@ -21,14 +21,18 @@ const styles = {
 
 function ButtonAppBar(props) {
     const { classes } = props;
+    const buttons = {};
     return (
       <div className={classes.root}>
           <AppBar position="static">
               <Toolbar>
                   <Typography variant="h6" color="inherit" className={classes.grow}>
-                      Welcome, {props.name}!
+                      Welcome!
                   </Typography>
                   <Button color="inherit">Create RSO</Button>
+                  <Button color="inherit">My RSOs</Button>
+                  <Button color="inherit">Events</Button>
+                  <Button color="inherit">Create Event</Button>
                   <Button color="inherit">Sign Out</Button>
               </Toolbar>
           </AppBar>
@@ -38,6 +42,7 @@ function ButtonAppBar(props) {
 
 ButtonAppBar.propTypes = {
     classes: PropTypes.object.isRequired,
+    role: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(ButtonAppBar);
