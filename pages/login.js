@@ -38,13 +38,13 @@ class Login extends Component {
     handleSubmit = async () => {
         try {
             const result = await signIn(this.state.email, this.state.password);
-            Router.push(`/user?uid=${result.user.uid}`);
+            Router.push(`/loggedIn?uid=${result.user.uid}`);
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
                 this.setState({
                     errorMessage: `${
-                        this.state.email
-                    } is not registered in our system.`,
+                      this.state.email
+                      } is not registered in our system.`,
                 });
             } else {
                 this.setState({
