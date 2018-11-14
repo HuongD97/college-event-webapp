@@ -38,7 +38,6 @@ const getUser = (uid, callback) => {
 };
 
 const getRole = (uid, callback) => {
-    console.log('AGGGGGH');
     const superadminQuery = `SELECT * FROM Superadmins where superadmin_id = '${uid}'`;
     const adminQuery = `SELECT * FROM Admins where admin_id = '${uid}'`;
     const retVal = [];
