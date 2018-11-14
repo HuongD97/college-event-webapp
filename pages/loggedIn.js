@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Router, { withRouter } from 'next/router';
-import ButtonAppBar from '../components/ButtonAppBar';
 import { Card, CardContent, AppBar, Toolbar, Button } from '@material-ui/core';
-import ErrorMessage from '../components/Error';
 import axios from 'axios';
 import { assign, pick, keys } from 'lodash';
 import Intro from '../components/Intro';
@@ -72,6 +70,25 @@ class LoggedIn extends Component {
         );
     };
 
+    renderAppBar = () => {
+        return (
+            <AppBar position="static">
+                <Toolbar>
+                    <Button color="inherit">Create RSO</Button>
+                    <Button color="inherit">Join RSOs</Button>
+                    <Button color="inherit">Events</Button>
+                    <Button color="inherit">Create Event</Button>
+                    <Button color="inherit" onClick={this.toggleAccountInfo}>
+                        Account
+                    </Button>
+                    <Button color="inherit" onClick={this.handleSignOut}>
+                        Sign Out
+                    </Button>
+                </Toolbar>
+            </AppBar>
+        );
+    };
+
     toggleAccountInfo = () => {
         this.setState({
             showAccountInfo: !this.state.showAccountInfo,
@@ -81,23 +98,7 @@ class LoggedIn extends Component {
     render() {
         return (
             <div style={styles.root}>
-                <AppBar position="static">
-                    <Toolbar>
-                        <Button color="inherit">Create RSO</Button>
-                        <Button color="inherit">Join RSOs</Button>
-                        <Button color="inherit">Events</Button>
-                        <Button color="inherit">Create Event</Button>
-                        <Button
-                            color="inherit"
-                            onClick={this.toggleAccountInfo}
-                        >
-                            Account
-                        </Button>
-                        <Button color="inherit" onClick={this.handleSignOut}>
-                            Sign Out
-                        </Button>
-                    </Toolbar>
-                </AppBar>
+                {this.renderAppBar()}
                 <Break height={15} />
                 {this.renderAccountInfo()}
                 <Break height={15} />
