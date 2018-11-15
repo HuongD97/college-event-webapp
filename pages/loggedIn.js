@@ -9,6 +9,7 @@ import Intro from '../components/Intro';
 import Break from '../components/Break';
 import { signOut } from '../services/accounts';
 import CreateRSOs from '../components/CreateRSOs';
+import RSOs from '../components/RSOs';
 
 const ROLE_OPTIONS = {
     student: 'student',
@@ -131,7 +132,7 @@ class LoggedIn extends Component {
             case TAB_OPTIONS.create_rso:
                 return <CreateRSOs user={user}/>;
             case TAB_OPTIONS.join_rso:
-                return <div>Join RSOs here!</div>;
+                return <RSOs user={user} />;
             case TAB_OPTIONS.show_events:
                 return <div>Show events here!</div>;
             case TAB_OPTIONS.create_event:
