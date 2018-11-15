@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import Router, { withRouter } from 'next/router';
-import { Card, CardContent, AppBar, Toolbar, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Button } from '@material-ui/core';
 import axios from 'axios';
-import { assign, pick, keys } from 'lodash';
+import pick from 'lodash/pick';
+import assign from 'lodash/assign';
+import keys from 'lodash/keys';
 import Intro from '../components/Intro';
 import Break from '../components/Break';
 import { signOut } from '../services/accounts';
+import CreateRSOs from '../components/CreateRSOs';
 
 const ROLE_OPTIONS = {
     student: 'student',
@@ -39,7 +42,7 @@ class LoggedIn extends Component {
             uid: uid,
             role: '',
             errorMessage: '',
-            currentTab: TAB_OPTIONS.show_account,
+            currentTab: TAB_OPTIONS.create_rso,
             showAccountInfo: true,
         };
     }
@@ -68,19 +71,6 @@ class LoggedIn extends Component {
         } catch (e) {
             console.log('Error signing out.', e);
         }
-    };
-
-    renderAccountInfo = () => {
-        if (this.state.currentTab != TAB_OPTIONS.show_account) {
-            return null;
-        }
-
-        return (
-            <div style={{ margin: '0px', padding: '0px' }}>
-                <Intro user={this.state} />
-                <Break height={15} />
-            </div>
-        );
     };
 
     switch = tabName => event => {
@@ -135,19 +125,35 @@ class LoggedIn extends Component {
         );
     };
 
-    toggleAccountInfo = () => {
-        this.setState({
-            showAccountInfo: !this.state.showAccountInfo,
-        });
+    renderTab = () => {
+        const user = assign({}, pick(this.state, ['firstName', 'lastName', 'university', 'role', 'email']));
+        switch (this.state.currentTab) {
+            case TAB_OPTIONS.create_rso:
+                return <CreateRSOs user={user}/>;
+            case TAB_OPTIONS.join_rso:
+                return <div>Join RSOs here!</div>;
+            case TAB_OPTIONS.show_events:
+                return <div>Show events here!</div>;
+            case TAB_OPTIONS.create_event:
+                return <div>Create an event here!</div>;
+            case TAB_OPTIONS.show_account:
+                return (
+                    <div style={{ margin: '0px', padding: '0px' }}>
+                        <Intro user={this.state} />
+                        <Break height={15} />
+                    </div>
+                );
+            default:
+                return null;
+        }
     };
 
     render() {
-        console.log('Current tab', this.state.currentTab);
         return (
             <div style={styles.root}>
                 {this.renderAppBar()}
                 <Break height={15} />
-                {this.renderAccountInfo()}
+                {this.renderTab()}
                 <Break height={15} />
             </div>
         );
