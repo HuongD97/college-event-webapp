@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Button from '@material-ui/core/Button';
-import FormContainer from '../components/FormContainer';
+import FormContainer from './FormContainer';
 import classNames from 'classnames';
-import { signIn } from '../services/accounts';
 import Router from 'next/router';
-import ErrorMessage from '../components/Error';
+import ErrorMessage from './Error';
+import assign from 'lodash/assign';
+import remove from 'lodash/remove';
+import Break from './Break';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import axios from 'axios';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Chip from '@material-ui/core/Chip';
 
 const styles = theme => ({
     textField: {
@@ -19,28 +24,76 @@ const styles = theme => ({
     },
 });
 
+const fakestudents = [
+    {
+        uid: 1,
+        name: 'Huong',
+    },
+    {
+        uid: 2,
+        name: 'Weilin',
+    },
+    {
+        uid: 3,
+        name: 'Vicky',
+    },
+];
 class CreateRSOs extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userID: null,
-            email: '',
-            password: '',
-            errorMessage: null,
-            showPassword: false,
-            loading: false,
+            user: {},
             form: {
                 rso_name: '',
                 rso_university: '',
                 rso_description: '',
-                rso_admin_id: ''
-            }
+                rso_admin_id: '',
+                rso_members: [],
+            },
+            universityStudentChoices: [],
+            errorMessage: '',
+            loading: false,
+        };
+    }
+
+    async componentDidMount() {
+        try {
+            const res = await axios.post('/universityStudents', {
+                university: this.props.user.university,
+            });
+            this.setState({
+                user: this.props.user,
+                form: assign({}, this.state.form, {
+                    rso_university: this.props.user.university,
+                }),
+                universityStudentChoices: res.data.allStudents,
+            });
+            console.log('this.state', this.state);
+        } catch (e) {
+            console.error(e);
         }
-        ;
     }
 
     handleChange = prop => event => {
-        this.setState({ [prop]: event.target.value });
+        const modifiedForm = assign({}, this.state.form, {
+            [prop]: event.target.value,
+        });
+        this.setState({ form: modifiedForm });
+    };
+
+    handleSelect = event => {
+        let modified_rso_members = this.state.form.rso_members;
+        modified_rso_members.push(event.target.value);
+
+        this.setState({
+            form: assign({}, this.state.form, {
+                rso_members: modified_rso_members,
+            }),
+            universityStudentChoices: remove(
+                this.state.universityStudentChoices,
+                student => student.uid !== event.target.value.uid,
+            ),
+        });
     };
 
     handleSubmit = async () => {
@@ -62,57 +115,79 @@ class CreateRSOs extends Component {
         }
     };
 
-    render() {
-        const { classes, user } = this.props;
-        console.log('user is', user);
+    renderChoices = () => {
         return (
-            <FormContainer title="Create New RSO" loading={this.state.loading}>
+            <Card>
+                {this.state.form.rso_members.map(student => (
+                    <CardContent key={student.uid}>
+                        {`${student.firstName} ${student.lastName}`}
+                    </CardContent>
+                ))}
+            </Card>
+        );
+    };
+
+    render() {
+        const { classes } = this.props;
+        console.log('form is', this.state.form);
+        return (
+            <FormContainer
+                title="Create a New RSO"
+                loading={this.state.loading}
+                minWidth={'400px'}
+            >
                 <TextField
-                  label="RSO Name"
-                  className={classNames(classes.textField)}
-                  type="text"
-                  name="rso_name"
-                  value={this.state.rso_name}
-                  onChange={this.handleChange('university')}
-                />
-                <TextField
-                  label="University"
-                  className={classNames(classes.textField)}
-                  type="text"
-                  name="university"
-                  value={this.state.university}
-                  onChange={this.handleChange('university')}
-                />
-                <TextField
+                    label="RSO Name"
                     className={classNames(classes.textField)}
-                    type={this.state.showPassword ? 'text' : 'password'}
-                    label="Password"
-                    value={this.state.password}
-                    onChange={this.handleChange('password')}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="Toggle password visibility"
-                                    onClick={this.handleClickShowPassword}
-                                >
-                                    {this.state.showPassword ? (
-                                        <VisibilityOff />
-                                    ) : (
-                                        <Visibility />
-                                    )}
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
+                    type="text"
+                    name="rso_name"
+                    value={this.state.form.rso_name}
+                    onChange={this.handleChange('rso_name')}
                 />
+                <TextField
+                    label="University"
+                    className={classNames(classes.textField)}
+                    type="text"
+                    name="rso_university"
+                    value={this.state.form.rso_university}
+                    disabled={true}
+                />
+                <TextField
+                    label="Description"
+                    className={classNames(classes.textField)}
+                    type="text"
+                    name="rso_description"
+                    value={this.state.form.rso_description}
+                    onChange={this.handleChange('rso_description')}
+                    multiline={true}
+                    rowsMax={4}
+                />
+                <InputLabel htmlFor="students-selector">Members</InputLabel>
+                <Select
+                    value={'Select members'}
+                    placeholder={'Please select at least five students'}
+                    onChange={this.handleSelect}
+                    inputProps={{
+                        name: 'student-members',
+                        id: 'students-selector',
+                    }}
+                >
+                    {this.state.universityStudentChoices.map(student => (
+                        <MenuItem value={student} key={student.uid}>
+                            {`${student.firstName} ${student.lastName}`}
+                        </MenuItem>
+                    ))}
+                </Select>
+                <Break height={15} />
+                {this.renderChoices()}
+                <Break height={15} />
                 <ErrorMessage message={this.state.errorMessage} />
                 <Button
                     variant="outlined"
                     color="primary"
                     onClick={this.handleSubmit}
                 >
-                    Sign In
+                    Submit
                 </Button>
             </FormContainer>
         );
@@ -121,7 +196,7 @@ class CreateRSOs extends Component {
 
 CreateRSOs.propTypes = {
     classes: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(CreateRSOs);
