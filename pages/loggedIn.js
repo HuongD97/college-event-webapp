@@ -7,13 +7,25 @@ import Intro from '../components/Intro';
 import Break from '../components/Break';
 import { signOut } from '../services/accounts';
 
+const ROLE_OPTIONS = {
+    student: 'student',
+    admin: 'admin',
+    superadmin: 'superadmin',
+};
 const styles = {
     root: {
         flexGrow: 1,
     },
 };
 
-const tabs = [];
+const TAB_OPTIONS = {
+    create_rso: 'create_rso',
+    join_rso: 'join_rso',
+    create_event: 'create_event',
+    show_events: 'show_events',
+    show_account: 'show_account',
+};
+
 class LoggedIn extends Component {
     constructor(props) {
         super(props);
@@ -27,6 +39,7 @@ class LoggedIn extends Component {
             uid: uid,
             role: '',
             errorMessage: '',
+            currentTab: TAB_OPTIONS.show_account,
             showAccountInfo: true,
         };
     }
@@ -58,7 +71,7 @@ class LoggedIn extends Component {
     };
 
     renderAccountInfo = () => {
-        if (!this.state.showAccountInfo) {
+        if (this.state.currentTab != TAB_OPTIONS.show_account) {
             return null;
         }
 
@@ -70,15 +83,48 @@ class LoggedIn extends Component {
         );
     };
 
+    switch = tabName => event => {
+        this.setState({ currentTab: tabName });
+    };
+
     renderAppBar = () => {
+        const { role } = this.state;
+        const createEvent =
+            role === ROLE_OPTIONS.superadmin || role === ROLE_OPTIONS.admin;
+
         return (
             <AppBar position="static">
                 <Toolbar>
-                    <Button color="inherit">Create RSO</Button>
-                    <Button color="inherit">Join RSOs</Button>
-                    <Button color="inherit">Events</Button>
-                    <Button color="inherit">Create Event</Button>
-                    <Button color="inherit" onClick={this.toggleAccountInfo}>
+                    <Button
+                        color="inherit"
+                        onClick={this.switch(TAB_OPTIONS.create_rso)}
+                    >
+                        Create RSO
+                    </Button>
+                    <Button
+                        color="inherit"
+                        onClick={this.switch(TAB_OPTIONS.join_rso)}
+                    >
+                        Join RSOs
+                    </Button>
+                    <Button
+                        color="inherit"
+                        onClick={this.switch(TAB_OPTIONS.show_events)}
+                    >
+                        Events
+                    </Button>
+                    {createEvent ? (
+                        <Button
+                            color="inherit"
+                            onClick={this.switch(TAB_OPTIONS.create_event)}
+                        >
+                            Create Event
+                        </Button>
+                    ) : null}
+                    <Button
+                        color="inherit"
+                        onClick={this.switch(TAB_OPTIONS.show_account)}
+                    >
                         Account
                     </Button>
                     <Button color="inherit" onClick={this.handleSignOut}>
@@ -96,6 +142,7 @@ class LoggedIn extends Component {
     };
 
     render() {
+        console.log('Current tab', this.state.currentTab);
         return (
             <div style={styles.root}>
                 {this.renderAppBar()}
