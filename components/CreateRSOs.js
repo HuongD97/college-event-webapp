@@ -241,7 +241,7 @@ class CreateRSOs extends Component {
                 {this.renderAdminChoices()}
                 <Break height={15} />
                 <ErrorMessage message={this.state.errorMessage} />
-                <SuccessMessage message={'hey' + this.state.successMessage} />
+                <SuccessMessage message={this.state.successMessage} />
                 <Button
                     variant="outlined"
                     color="primary"

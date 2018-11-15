@@ -115,24 +115,3 @@ app.prepare()
         console.error(ex.stack);
         process.exit(1);
     });
-//
-// , {
-//     email: "huongd97@gmail.com"
-//     firstName: "Huong"
-//     lastName: "Dang"
-//     uid: "aZGhRZnWdHY2P9iEY7uM34gXCKA3"
-//     university: "University of Central Florida"
-// }, {
-//     email: "jessicajung@ucf.edu"
-//     firstName: "Jessica"
-//     lastName: "Jung"
-//     uid: "Lz06QvpZyhfjqpLgyGDV1E51Ety2"
-//     university: "University of Central Florida"
-//
-// },{
-//     email: "husstam@ucf.edu"
-//     firstName: "Huss"
-//     lastName: "Tam"
-//     uid: "qp5w2FlPUdMQUiqfewiUx7Tnnpv2"
-//     university: "University of Central Florida"
-// }
