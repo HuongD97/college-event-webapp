@@ -61,7 +61,6 @@ class CreateRSOs extends Component {
                 }),
                 universityStudentChoices: res.data.allStudents,
             });
-            console.log('this.state', this.state);
         } catch (e) {
             console.error(e);
         }
@@ -117,9 +116,6 @@ class CreateRSOs extends Component {
                 const result = await axios.post('/createRSO', {
                     rsoInfo: { ...this.state.form },
                 });
-
-                console.log('result', result);
-                console.log('result.data', result.data);
 
                 if (result.data.success) {
                     this.setState({
