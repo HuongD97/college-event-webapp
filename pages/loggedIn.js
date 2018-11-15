@@ -42,7 +42,7 @@ class LoggedIn extends Component {
             uid: uid,
             role: '',
             errorMessage: '',
-            currentTab: TAB_OPTIONS.create_rso,
+            currentTab: TAB_OPTIONS.show_account,
             showAccountInfo: true,
         };
     }
