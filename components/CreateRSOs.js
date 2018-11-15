@@ -21,6 +21,8 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Radio from '@material-ui/core/Radio';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
+import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 
 const styles = theme => ({
     textField: {
@@ -101,13 +103,27 @@ class CreateRSOs extends Component {
     };
 
     validateForm = () => {
-        return false;
+        const errorMessage = `Please fill out all fields of the form. You also must select at least 5 members to be in the new RSO.`;
+        const validation = map(this.state.form, property => property.length > 0);
+        console.log('validation is', validation);
+
+        if (validation.includes(false) || this.state.form.rso_members.length < 5) {
+            this.setState({ errorMessage: errorMessage });
+            return false;
+        }
+
+        this.setState({ errorMessage: '' });
+        return true;
     };
 
     handleSubmit = async () => {
         try {
-            const validate = this.validateForm();
+            this.setState({ loading: true });
+            const validation = this.validateForm();
+            
+            this.setState({ loading: false });
         } catch (err) {
+            this.setState({ loading: false });
             if (err.code === 'auth/user-not-found') {
                 this.setState({
                     errorMessage: `${
