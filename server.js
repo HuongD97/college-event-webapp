@@ -63,6 +63,18 @@ app.prepare()
             });
         });
 
+        server.post('/createRSO', jsonParser, (req, res) => {
+            const rsoInfo = { ...req.body.rsoInfo };
+
+            RSOs.createRSO(rsoInfo, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(data);
+                }
+            });
+        });
+
         server.post('/user', jsonParser, (req, res) => {
             const { uid } = req.body;
             if (!uid) {
@@ -77,15 +89,15 @@ app.prepare()
         });
 
         server.get('/test', (req, res) => {
-            Users.getUserAndRole(
-                'HmIYKjmPmrY1H9babReo2iKywWT2',
-                (err, data) => {
-                    console.log('err', err);
-                    console.log('data', data);
-                    if (err) res.json(err);
-                    else res.json({ user: data });
-                },
-            );
+            // RSOs.addAdmin(
+            //     'Lz06QvpZyhfjqpLgyGDV1E51Ety2',
+            //     (err, data, fields, anythingelse) => {
+            //         console.log('err', err);
+            //         console.log('data', data);
+            //         if (err) res.json(err);
+            //         else res.json({ rso: data, fields: fields, anythingelse: anythingelse});
+            //     },
+            // );
         });
 
         server.get('/', (req, res) => app.render(req, res, '/index'));
@@ -103,3 +115,24 @@ app.prepare()
         console.error(ex.stack);
         process.exit(1);
     });
+//
+// , {
+//     email: "huongd97@gmail.com"
+//     firstName: "Huong"
+//     lastName: "Dang"
+//     uid: "aZGhRZnWdHY2P9iEY7uM34gXCKA3"
+//     university: "University of Central Florida"
+// }, {
+//     email: "jessicajung@ucf.edu"
+//     firstName: "Jessica"
+//     lastName: "Jung"
+//     uid: "Lz06QvpZyhfjqpLgyGDV1E51Ety2"
+//     university: "University of Central Florida"
+//
+// },{
+//     email: "husstam@ucf.edu"
+//     firstName: "Huss"
+//     lastName: "Tam"
+//     uid: "qp5w2FlPUdMQUiqfewiUx7Tnnpv2"
+//     university: "University of Central Florida"
+// }
