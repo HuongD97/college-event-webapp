@@ -51,6 +51,18 @@ app.prepare()
             });
         });
 
+        server.post('/universityRSOs', jsonParser, (req, res) => {
+            const { university } = req.body;
+
+            RSOs.getAllRSOsFromUni(university, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ allRSOs: data });
+                }
+            });
+        });
+
         server.post('/user', jsonParser, (req, res) => {
             const { uid } = req.body;
             if (!uid) {
