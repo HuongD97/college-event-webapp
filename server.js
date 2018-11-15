@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 const Users = require('./model/Users');
+const RSOs = require('./model/RSOs');
 const database = require('./db');
 
 const handle = app.getRequestHandler();
@@ -36,6 +37,18 @@ app.prepare()
 
         server.get('/allUsers', (req, res) => {
             Users.getAll(result => res.json(result));
+        });
+
+        server.post('/universityStudents', jsonParser, (req, res) => {
+            const { university } = req.body;
+
+            RSOs.getAllStudentsFromUniversity(university, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ allStudents: data });
+                }
+            });
         });
 
         server.post('/user', jsonParser, (req, res) => {
