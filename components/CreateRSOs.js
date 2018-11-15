@@ -5,7 +5,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormContainer from './FormContainer';
 import classNames from 'classnames';
-import Router from 'next/router';
 import ErrorMessage from './Error';
 import assign from 'lodash/assign';
 import remove from 'lodash/remove';
@@ -21,8 +20,8 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Radio from '@material-ui/core/Radio';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
+import SuccessMessage from './Success';
 
 const styles = theme => ({
     textField: {
@@ -30,20 +29,7 @@ const styles = theme => ({
     },
 });
 
-const fakestudents = [
-    {
-        uid: 1,
-        name: 'Huong',
-    },
-    {
-        uid: 2,
-        name: 'Weilin',
-    },
-    {
-        uid: 3,
-        name: 'Vicky',
-    },
-];
+
 class CreateRSOs extends Component {
     constructor(props) {
         super(props);
@@ -58,6 +44,7 @@ class CreateRSOs extends Component {
             },
             universityStudentChoices: [],
             errorMessage: '',
+            successMessage: '',
             loading: false,
         };
     }
@@ -104,10 +91,15 @@ class CreateRSOs extends Component {
 
     validateForm = () => {
         const errorMessage = `Please fill out all fields of the form. You also must select at least 5 members to be in the new RSO.`;
-        const validation = map(this.state.form, property => property.length > 0);
-        console.log('validation is', validation);
+        const validation = map(
+            this.state.form,
+            property => property.length > 0,
+        );
 
-        if (validation.includes(false) || this.state.form.rso_members.length < 5) {
+        if (
+            validation.includes(false) ||
+            this.state.form.rso_members.length < 5
+        ) {
             this.setState({ errorMessage: errorMessage });
             return false;
         }
@@ -120,21 +112,33 @@ class CreateRSOs extends Component {
         try {
             this.setState({ loading: true });
             const validation = this.validateForm();
-            
+
+            if (validation) {
+                const result = await axios.post('/createRSO', {
+                    rsoInfo: { ...this.state.form },
+                });
+
+                console.log('result', result);
+                console.log('result.data', result.data);
+
+                if (result.data.success) {
+                    this.setState({
+                        successMessage: `Successfully created new RSO: ${
+                            result.data.rso_name
+                        }`,
+                    });
+                } else {
+                    throw `Unable to create new RSO`;
+                }
+            }
+
             this.setState({ loading: false });
         } catch (err) {
-            this.setState({ loading: false });
-            if (err.code === 'auth/user-not-found') {
-                this.setState({
-                    errorMessage: `${
-                        this.state.email
-                    } is not registered in our system.`,
-                });
-            } else {
-                this.setState({
-                    errorMessage: `${err.message}`,
-                });
-            }
+            console.error('Error creating new RSO', err);
+            this.setState({
+                errorMessage: (err && err.message ? `${err.message}` : err),
+                loading: false
+            });
         }
     };
 
@@ -183,7 +187,6 @@ class CreateRSOs extends Component {
 
     render() {
         const { classes } = this.props;
-        console.log('form is', this.state.form);
         return (
             <FormContainer
                 title="Create a New RSO"
@@ -238,6 +241,7 @@ class CreateRSOs extends Component {
                 {this.renderAdminChoices()}
                 <Break height={15} />
                 <ErrorMessage message={this.state.errorMessage} />
+                <SuccessMessage message={'hey' + this.state.successMessage} />
                 <Button
                     variant="outlined"
                     color="primary"
