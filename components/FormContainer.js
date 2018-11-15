@@ -26,11 +26,20 @@ const FormContainer = props => {
                 direction={'column'}
                 justify={'center'}
                 alignItems={'center'}
-                style={{ minHeight: '100vh'}}
+                style={{ minHeight: '100vh' }}
             >
-                <Grid item>
+                <Grid
+                    item
+                    style={
+                        props.minWidth
+                            ? {
+                                  minWidth: props.minWidth,
+                              }
+                            : null
+                    }
+                >
                     <Card>
-                        {(props.loading ? <LinearProgress /> : null)}
+                        {props.loading ? <LinearProgress /> : null}
                         <CardHeader title={props.title} />
                         <CardContent className={classNames(classes.content)}>
                             {props.children}
@@ -45,7 +54,8 @@ const FormContainer = props => {
 FormContainer.propTypes = {
     classes: PropTypes.object.isRequired,
     title: PropTypes.string.isRequired,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    minWidth: PropTypes.string
 };
 
 export default withStyles(styles)(FormContainer);
