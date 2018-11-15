@@ -100,10 +100,13 @@ class CreateRSOs extends Component {
         });
     };
 
+    validateForm = () => {
+        return false;
+    };
+
     handleSubmit = async () => {
         try {
-            const result = await signIn(this.state.email, this.state.password);
-            Router.push(`/loggedIn?uid=${result.user.uid}`);
+            const validate = this.validateForm();
         } catch (err) {
             if (err.code === 'auth/user-not-found') {
                 this.setState({
