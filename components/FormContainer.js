@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Grid from '@material-ui/core/Grid';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const styles = {
     root: {
@@ -29,6 +30,7 @@ const FormContainer = props => {
             >
                 <Grid item>
                     <Card>
+                        {(props.loading ? <LinearProgress /> : null)}
                         <CardHeader title={props.title} />
                         <CardContent className={classNames(classes.content)}>
                             {props.children}
@@ -43,6 +45,7 @@ const FormContainer = props => {
 FormContainer.propTypes = {
     classes: PropTypes.object.isRequired,
     title: PropTypes.string.isRequired,
+    loading: PropTypes.bool
 };
 
 export default withStyles(styles)(FormContainer);
