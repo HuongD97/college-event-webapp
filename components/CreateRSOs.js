@@ -16,7 +16,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import axios from 'axios';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import Chip from '@material-ui/core/Chip';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormLabel from '@material-ui/core/FormLabel';
+import Radio from '@material-ui/core/Radio';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 const styles = theme => ({
     textField: {
@@ -127,6 +131,37 @@ class CreateRSOs extends Component {
         );
     };
 
+    handleRadioChoice = event => {
+        this.setState({
+            form: assign({}, this.state.form, {
+                rso_admin_id: event.target.value,
+            }),
+        });
+    };
+
+    renderAdminChoices = () => {
+        return (
+            <FormControl>
+                <FormLabel component="legend">Admin Options</FormLabel>
+                <RadioGroup
+                    aria-label="Gender"
+                    name="gender1"
+                    value={this.state.form.rso_admin_id}
+                    onChange={this.handleRadioChoice}
+                >
+                    {this.state.form.rso_members.map(member => (
+                        <FormControlLabel
+                            key={member.uid}
+                            value={member.uid}
+                            control={<Radio />}
+                            label={`${member.firstName} ${member.lastName}`}
+                        />
+                    ))}
+                </RadioGroup>
+            </FormControl>
+        );
+    };
+
     render() {
         const { classes } = this.props;
         console.log('form is', this.state.form);
@@ -180,6 +215,8 @@ class CreateRSOs extends Component {
                 </Select>
                 <Break height={15} />
                 {this.renderChoices()}
+                <Break height={15} />
+                {this.renderAdminChoices()}
                 <Break height={15} />
                 <ErrorMessage message={this.state.errorMessage} />
                 <Button
