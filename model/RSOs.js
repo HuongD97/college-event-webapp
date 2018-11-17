@@ -41,19 +41,25 @@ const addAdmin = (uid, callback) => {
 };
 
 const addMembersOfRSO = (rso_id, members, callback) => {
-    async.each(members, (member, nextCall) => {
-        let query = `insert into RSO_membership (student_id, rso_id) values ('${member.uid}', '${rso_id}')`;
+    async.each(
+        members,
+        (member, nextCall) => {
+            let query = `insert into RSO_membership (student_id, rso_id) values ('${
+                member.uid
+            }', '${rso_id}')`;
 
-        db.get().query(query, (err) => {
-            if (err) nextCall(err);
-            else nextCall();
-        });
-    }, (err) => {
-       if (err) callback(err);
-       else {
-           callback();
-       }
-    });
+            db.get().query(query, err => {
+                if (err) nextCall(err);
+                else nextCall();
+            });
+        },
+        err => {
+            if (err) callback(err);
+            else {
+                callback();
+            }
+        },
+    );
 };
 
 exports.createRSO = (rsoInfo, callback) => {
@@ -68,7 +74,9 @@ exports.createRSO = (rsoInfo, callback) => {
         callback({ errorMessage: `Need to provide all the rso information!` });
     } else {
         addAdmin(rso_admin_id, (err1, res1) => {
-            if (err1) callback(err1);
+            // Only throw an error if the error is not of duplicate entry (this just
+            // means that this person had been added to the Admins table
+            if (err1 && err1.code !== 'ER_DUP_ENTRY') callback(err1);
             else {
                 const query = `insert into RSOs (admin_id, rso_name, university, description)
                 values ('${rso_admin_id}', '${rso_name}', '${rso_university}', '${rso_description}')`;
