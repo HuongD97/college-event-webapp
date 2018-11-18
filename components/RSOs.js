@@ -12,22 +12,26 @@ import axios from 'axios';
 import filter from 'lodash/filter';
 import async from 'async';
 import each from 'lodash/each';
+import assign from 'lodash/assign';
 
-const rso = ({
-    rso_id,
-    rso_name,
-    description,
-    admin_name,
-    admin_email,
-    joined,
-}) => {
+const Rso = props => {
+    let {
+        rso_id,
+        rso_name,
+        description,
+        admin_name,
+        admin_email,
+        joined,
+    } = props.rsoInfo;
+
+    console.log('props.rsoInfo', props.rsoInfo);
     // functional component let's try it out!!
     const [join, setJoin] = useState(joined);
     const handleJoin = () => {
         setJoin(!join);
     };
 
-    const joinedButton = () => {
+    const JoinedButton = () => {
         return (
             <Button variant="outlined" color="secondary" disabled={true}>
                 Joined
@@ -35,7 +39,7 @@ const rso = ({
         );
     };
 
-    const joinButton = () => {
+    const JoinButton = () => {
         return (
             <Button variant="outlined" color="primary" onClick={handleJoin}>
                 Join
@@ -44,7 +48,7 @@ const rso = ({
     };
 
     return (
-        <Card key={rso_id}>
+        <Card>
             <CardContent>
                 <Typography component="p">
                     Name: <b>{rso_name}</b>
@@ -59,7 +63,7 @@ const rso = ({
                     Admin email: <b>{admin_email}</b>
                 </Typography>
                 <Break height={15} />
-                {join ? <joinButton /> : <joinedButton />}
+                {join ? <JoinButton /> : <JoinedButton />}
             </CardContent>
         </Card>
     );
@@ -158,6 +162,12 @@ class RSOs extends Component {
         return (
             <Card>
                 <CardHeader title={'Registered Student Organizations'} />
+                {this.state.rsos.map(thisRSO => (
+                    <Rso
+                        key={thisRSO.rso_id}
+                        rsoInfo={assign({}, thisRSO, { joined: true })}
+                    />
+                ))}
             </Card>
         );
     }
