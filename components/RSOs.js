@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {
     Card,
     CardContent,
@@ -9,14 +9,68 @@ import {
 import PropTypes from 'prop-types';
 import Break from './Break';
 import axios from 'axios';
+import filter from 'lodash/filter';
+import async from 'async';
 import each from 'lodash/each';
-import find from 'lodash/find';
+
+const rso = ({
+    rso_id,
+    rso_name,
+    description,
+    admin_name,
+    admin_email,
+    joined,
+}) => {
+    // functional component let's try it out!!
+    const [join, setJoin] = useState(joined);
+    const handleJoin = () => {
+        setJoin(!join);
+    };
+
+    const joinedButton = () => {
+        return (
+            <Button variant="outlined" color="secondary" disabled={true}>
+                Joined
+            </Button>
+        );
+    };
+
+    const joinButton = () => {
+        return (
+            <Button variant="outlined" color="primary" onClick={handleJoin}>
+                Join
+            </Button>
+        );
+    };
+
+    return (
+        <Card key={rso_id}>
+            <CardContent>
+                <Typography component="p">
+                    Name: <b>{rso_name}</b>
+                </Typography>
+                <Typography component="p">
+                    Description: <b>{description}</b>
+                </Typography>
+                <Typography component="p">
+                    Admin name: <b>{admin_name}</b>
+                </Typography>
+                <Typography component="p">
+                    Admin email: <b>{admin_email}</b>
+                </Typography>
+                <Break height={15} />
+                {join ? <joinButton /> : <joinedButton />}
+            </CardContent>
+        </Card>
+    );
+};
 
 class RSOs extends Component {
     constructor(props) {
         super(props);
         this.state = {
             rsos: [],
+            errorMessage: '',
         };
     }
 
@@ -25,19 +79,41 @@ class RSOs extends Component {
             const result = await axios.post('/universityRSOs', {
                 university: this.props.user.university,
             });
-            this.setState({ rsos: result.data.allRSOs });
 
-            each(result.data.allRSOs, async rso => {
-                const admin = await axios.post('/user', { uid: rso.admin_id });
-                let modifiedRSO = this.state.rsos;
-                let theRSO = find(modifiedRSO, { admin_id: rso.admin_id });
-                theRSO.admin_name =
-                    admin.data.user.firstName + admin.data.user.lastName;
-                theRSO.admin_email = admin.data.user.email;
+            let allRSOs = result.data.allRSOs;
 
-                this.setState({ rsos: modifiedRSO });
-            });
+            async.each(
+                allRSOs,
+                async (rso, next) => {
+                    try {
+                        const admin = await axios.post('/user', {
+                            uid: rso.admin_id,
+                        });
+
+                        let RSOs = filter(allRSOs, { admin_id: rso.admin_id });
+                        each(RSOs, thisRSO => {
+                            thisRSO.admin_name =
+                                admin.data.user.firstName +
+                                ' ' +
+                                admin.data.user.lastName;
+                            thisRSO.admin_email = admin.data.user.email;
+                        });
+                        next();
+                    } catch (e) {
+                        if (e) next(e);
+                    }
+                },
+                err => {
+                    if (err) throw err;
+                    else {
+                        this.setState({ rsos: allRSOs });
+                    }
+                },
+            );
         } catch (e) {
+            this.setState({
+                errorMessage: 'Could not retrieve RSOs',
+            });
             console.error(e);
         }
     }
@@ -79,11 +155,9 @@ class RSOs extends Component {
     };
 
     render() {
-        console.log('this.state', this.state);
         return (
             <Card>
                 <CardHeader title={'Registered Student Organizations'} />
-                {this.renderRSOs()}
             </Card>
         );
     }
