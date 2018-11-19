@@ -38,7 +38,6 @@ class RSOs extends Component {
             let userRSOs = userResults.data.userRSOs.map(
                 userRSO => userRSO.rso_id,
             );
-            console.log('userRSOs equal', userRSOs);
             async.each(
                 allRSOs,
                 async (rso, next) => {
@@ -48,7 +47,11 @@ class RSOs extends Component {
                         });
 
                         // Figure out if the user has joined the RSO or not
-                        if (userRSOs.findIndex(userRSO => userRSO === rso.rso_id) > -1) {
+                        if (
+                            userRSOs.findIndex(
+                                userRSO => userRSO === rso.rso_id,
+                            ) > -1
+                        ) {
                             rso.joined = true;
                         } else {
                             rso.joined = false;
@@ -87,7 +90,11 @@ class RSOs extends Component {
             <Card>
                 <CardHeader title={'Registered Student Organizations'} />
                 {this.state.rsos.map(thisRSO => (
-                    <RSO key={thisRSO.rso_id} rsoInfo={thisRSO} />
+                    <RSO
+                        key={thisRSO.rso_id}
+                        rsoInfo={thisRSO}
+                        uid={this.state.user.uid}
+                    />
                 ))}
             </Card>
         );

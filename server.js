@@ -74,6 +74,18 @@ app.prepare()
             });
         });
 
+        server.post('/joinRSO', jsonParser, (req, res) => {
+            const { uid, rso_id } = req.body;
+
+            RSOs.joinRSO(uid, rso_id, (err, data) => {
+                if (err) {
+                    res.status(500).json(err);
+                } else {
+                    res.json(data);
+                }
+            });
+        });
+
         server.post('/createRSO', jsonParser, (req, res) => {
             const rsoInfo = { ...req.body.rsoInfo };
 

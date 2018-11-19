@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Typography, Button } from '@material-ui/core';
+import {
+    Card,
+    CardContent,
+    Typography,
+    Button,
+    CircularProgress,
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
 import Break from './Break';
+import axios from 'axios';
 
 const RSO = props => {
     let {
@@ -13,11 +20,22 @@ const RSO = props => {
         joined,
     } = props.rsoInfo;
 
-    console.log('props.rsoInfo', props.rsoInfo);
-
     const [join, setJoin] = useState(joined);
-    const handleJoin = () => {
-        setJoin(!join);
+    const [loading, setLoading] = useState(false);
+
+    const handleJoin = async () => {
+        try {
+            setLoading(true);
+            const res = await axios.post('/joinRSO', {
+                uid: props.uid,
+                rso_id: rso_id,
+            });
+
+            setJoin(res.data.joined);
+            setLoading(false);
+        } catch (e) {
+            setLoading(false);
+        }
     };
 
     const JoinedButton = () => {
@@ -36,6 +54,22 @@ const RSO = props => {
         );
     };
 
+    const LoadingButton = () => {
+        return (
+            <Button variant="outlined" disabled={true}>
+                <CircularProgress size={25} />
+            </Button>
+        );
+    };
+
+    const renderButton = () => {
+        if (loading) {
+            return <LoadingButton />;
+        } else {
+            return !join ? <JoinButton /> : <JoinedButton />;
+        }
+    };
+
     return (
         <Card>
             <CardContent>
@@ -52,7 +86,7 @@ const RSO = props => {
                     Admin email: <b>{admin_email}</b>
                 </Typography>
                 <Break height={15} />
-                {!join ? <JoinButton /> : <JoinedButton />}
+                {renderButton()}
             </CardContent>
         </Card>
     );

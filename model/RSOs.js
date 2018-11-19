@@ -123,3 +123,16 @@ exports.createRSO = (rsoInfo, callback) => {
         });
     }
 };
+
+exports.joinRSO = (uid, rso_id, callback) => {
+    if (!uid || !rso_id) callback(`No uid or rso_id provided!`);
+    else {
+        const query = `insert into RSO_membership (student_id, rso_id) values ('${uid}', '${rso_id}')`;
+        db.get().query(query, (err, res) => {
+            if (err) callback(err);
+            else {
+                callback(null, { joined: true });
+            }
+        });
+    }
+};
