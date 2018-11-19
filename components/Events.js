@@ -1,6 +1,8 @@
 import React, { Component, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import PublicEvents from './PublicEvents';
+import Break from './Break';
+import PrivateEvents from './PrivateEvents';
 
 class Events extends Component {
     constructor(props) {
@@ -14,6 +16,8 @@ class Events extends Component {
         return (
             <div>
                 <PublicEvents user={this.state.user} />
+                <Break height={15} />
+                <PrivateEvents user={this.state.user} />
             </div>
         );
     }
