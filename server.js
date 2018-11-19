@@ -143,6 +143,17 @@ app.prepare()
             });
         });
 
+        server.post('/userComments', jsonParser, (req, res) => {
+            const { uid } = req.body;
+            Events.getUserComments(uid, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ userComments: data });
+                }
+            });
+        });
+
         server.get('/test', (req, res) => {});
 
         server.get('/', (req, res) => app.render(req, res, '/index'));

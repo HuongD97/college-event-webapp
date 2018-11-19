@@ -62,6 +62,20 @@ exports.getAllStudentRSOEvents = (uid, callback) => {
             else {
                 callback(null, results);
             }
-        })
+        });
+    }
+};
+
+exports.getUserComments = (uid, callback) => {
+    if (!uid) callback(`No uid provided!`);
+    else {
+        const query = `select * from Comments c, Users u where u.uid = '${uid}'`;
+
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
     }
 };

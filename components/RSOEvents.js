@@ -29,7 +29,11 @@ class RSOEvents extends Component {
             <Card>
                 <CardHeader title={'RSO Events'} />
                 {this.state.rsoEvents.map(rsoEvent => (
-                    <Event key={rsoEvent.rso_event_id} eventInfo={rsoEvent} />
+                    <Event
+                        key={rsoEvent.rso_event_id}
+                        eventInfo={rsoEvent}
+                        userComments={this.props.userComments}
+                    />
                 ))}
             </Card>
         );
@@ -38,6 +42,7 @@ class RSOEvents extends Component {
 
 RSOEvents.propTypes = {
     user: PropTypes.object.isRequired,
+    userComments: PropTypes.object.isRequired,
 };
 
 export default RSOEvents;
