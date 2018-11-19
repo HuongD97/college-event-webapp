@@ -30,7 +30,20 @@ exports.getAllRSOsFromUni = (university, callback) => {
     }
 };
 
-exports.getAllRSOsThatStudentBelongTo = (uid, callback) => {};
+exports.getAllRSOsThatStudentBelongTo = (uid, callback) => {
+    console.log('uid', uid);
+
+    if (!uid) callback({ errorMessage: `No student id provided!` });
+    else {
+        const query = `select mem.rso_id from RSO_membership mem where mem.student_id='${uid}'`;
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
+    }
+};
 
 const addAdmin = (uid, callback) => {
     const query = `insert into Admins (admin_id) values ('${uid}')`;
@@ -41,19 +54,25 @@ const addAdmin = (uid, callback) => {
 };
 
 const addMembersOfRSO = (rso_id, members, callback) => {
-    async.each(members, (member, nextCall) => {
-        let query = `insert into RSO_membership (student_id, rso_id) values ('${member.uid}', '${rso_id}')`;
+    async.each(
+        members,
+        (member, nextCall) => {
+            let query = `insert into RSO_membership (student_id, rso_id) values ('${
+                member.uid
+            }', '${rso_id}')`;
 
-        db.get().query(query, (err) => {
-            if (err) nextCall(err);
-            else nextCall();
-        });
-    }, (err) => {
-       if (err) callback(err);
-       else {
-           callback();
-       }
-    });
+            db.get().query(query, err => {
+                if (err) nextCall(err);
+                else nextCall();
+            });
+        },
+        err => {
+            if (err) callback(err);
+            else {
+                callback();
+            }
+        },
+    );
 };
 
 exports.createRSO = (rsoInfo, callback) => {
@@ -68,7 +87,9 @@ exports.createRSO = (rsoInfo, callback) => {
         callback({ errorMessage: `Need to provide all the rso information!` });
     } else {
         addAdmin(rso_admin_id, (err1, res1) => {
-            if (err1) callback(err1);
+            // Only throw an error if the error is not of duplicate entry (this just
+            // means that this person had been added to the Admins table
+            if (err1 && err1.code !== 'ER_DUP_ENTRY') callback(err1);
             else {
                 const query = `insert into RSOs (admin_id, rso_name, university, description)
                 values ('${rso_admin_id}', '${rso_name}', '${rso_university}', '${rso_description}')`;
@@ -98,6 +119,19 @@ exports.createRSO = (rsoInfo, callback) => {
                         });
                     }
                 });
+            }
+        });
+    }
+};
+
+exports.joinRSO = (uid, rso_id, callback) => {
+    if (!uid || !rso_id) callback(`No uid or rso_id provided!`);
+    else {
+        const query = `insert into RSO_membership (student_id, rso_id) values ('${uid}', '${rso_id}')`;
+        db.get().query(query, (err, res) => {
+            if (err) callback(err);
+            else {
+                callback(null, { joined: true });
             }
         });
     }
