@@ -23,7 +23,6 @@ app.prepare()
 
         server.post('/create', jsonParser, (req, res) => {
             const { firstName, lastName, email, uid, university } = req.body;
-            console.log(req.body);
             if (!firstName || !lastName || !email || !uid || !university) {
                 return res.status(500).json({
                     error: `First name, last name, email, university, or uid is missing`,
