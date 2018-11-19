@@ -1,13 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import PublicEvents from './PublicEvents';
 
-class Events extends Component{
+class Events extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            user: props.user,
+        };
     }
 
     render() {
-        return <div>Show events here!</div>;
+        return (
+            <div>
+                <PublicEvents user={this.state.user} />
+            </div>
+        );
     }
 }
+
+Events.propTypes = {
+    user: PropTypes.object.isRequired,
+};
 
 export default Events;
