@@ -13,61 +13,7 @@ import filter from 'lodash/filter';
 import async from 'async';
 import each from 'lodash/each';
 import assign from 'lodash/assign';
-
-const Rso = props => {
-    let {
-        rso_id,
-        rso_name,
-        description,
-        admin_name,
-        admin_email,
-        joined,
-    } = props.rsoInfo;
-
-    console.log('props.rsoInfo', props.rsoInfo);
-    // functional component let's try it out!!
-    const [join, setJoin] = useState(joined);
-    const handleJoin = () => {
-        setJoin(!join);
-    };
-
-    const JoinedButton = () => {
-        return (
-            <Button variant="outlined" color="secondary" disabled={true}>
-                Joined
-            </Button>
-        );
-    };
-
-    const JoinButton = () => {
-        return (
-            <Button variant="outlined" color="primary" onClick={handleJoin}>
-                Join
-            </Button>
-        );
-    };
-
-    return (
-        <Card>
-            <CardContent>
-                <Typography component="p">
-                    Name: <b>{rso_name}</b>
-                </Typography>
-                <Typography component="p">
-                    Description: <b>{description}</b>
-                </Typography>
-                <Typography component="p">
-                    Admin name: <b>{admin_name}</b>
-                </Typography>
-                <Typography component="p">
-                    Admin email: <b>{admin_email}</b>
-                </Typography>
-                <Break height={15} />
-                {join ? <JoinButton /> : <JoinedButton />}
-            </CardContent>
-        </Card>
-    );
-};
+import RSO from './RSO';
 
 class RSOs extends Component {
     constructor(props) {
@@ -75,17 +21,24 @@ class RSOs extends Component {
         this.state = {
             rsos: [],
             errorMessage: '',
+            user: props.user,
         };
     }
 
     async componentDidMount() {
         try {
             const result = await axios.post('/universityRSOs', {
-                university: this.props.user.university,
+                university: this.state.user.university,
+            });
+            const userResults = await axios.post('/userRSOs', {
+                uid: this.state.user.uid,
             });
 
             let allRSOs = result.data.allRSOs;
-
+            let userRSOs = userResults.data.userRSOs.map(
+                userRSO => userRSO.rso_id,
+            );
+            console.log('userRSOs equal', userRSOs);
             async.each(
                 allRSOs,
                 async (rso, next) => {
@@ -93,6 +46,13 @@ class RSOs extends Component {
                         const admin = await axios.post('/user', {
                             uid: rso.admin_id,
                         });
+
+                        // Figure out if the user has joined the RSO or not
+                        if (userRSOs.findIndex(userRSO => userRSO === rso.rso_id) > -1) {
+                            rso.joined = true;
+                        } else {
+                            rso.joined = false;
+                        }
 
                         let RSOs = filter(allRSOs, { admin_id: rso.admin_id });
                         each(RSOs, thisRSO => {
@@ -122,51 +82,12 @@ class RSOs extends Component {
         }
     }
 
-    handleJoin = event => {};
-
-    renderRSOs = () => {
-        if (!this.state.rsos) return null;
-
-        const listItems = this.state.rsos.map(rso => {
-            return (
-                <Card key={rso.rso_id}>
-                    <CardContent>
-                        <Typography component="p">
-                            Name: <b>{rso.rso_name}</b>
-                        </Typography>
-                        <Typography component="p">
-                            Description: <b>{rso.description}</b>
-                        </Typography>
-                        <Typography component="p">
-                            Admin name: <b>{rso.admin_name}</b>
-                        </Typography>
-                        <Typography component="p">
-                            Admin email: <b>{rso.admin_email}</b>
-                        </Typography>
-                        <Break height={15} />
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={this.handleJoin}
-                        >
-                            Join
-                        </Button>
-                    </CardContent>
-                </Card>
-            );
-        });
-        return listItems;
-    };
-
     render() {
         return (
             <Card>
                 <CardHeader title={'Registered Student Organizations'} />
                 {this.state.rsos.map(thisRSO => (
-                    <Rso
-                        key={thisRSO.rso_id}
-                        rsoInfo={assign({}, thisRSO, { joined: true })}
-                    />
+                    <RSO key={thisRSO.rso_id} rsoInfo={thisRSO} />
                 ))}
             </Card>
         );
