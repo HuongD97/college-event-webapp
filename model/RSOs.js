@@ -30,7 +30,20 @@ exports.getAllRSOsFromUni = (university, callback) => {
     }
 };
 
-exports.getAllRSOsThatStudentBelongTo = (uid, callback) => {};
+exports.getAllRSOsThatStudentBelongTo = (uid, callback) => {
+    console.log('uid', uid);
+
+    if (!uid) callback({ errorMessage: `No student id provided!` });
+    else {
+        const query = `select mem.rso_id from RSO_membership mem where mem.student_id='${uid}'`;
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
+    }
+};
 
 const addAdmin = (uid, callback) => {
     const query = `insert into Admins (admin_id) values ('${uid}')`;
