@@ -10,6 +10,7 @@ import Break from '../components/Break';
 import { signOut } from '../services/accounts';
 import CreateRSOs from '../components/CreateRSOs';
 import RSOs from '../components/RSOs';
+import Events from '../components/Events';
 
 const ROLE_OPTIONS = {
     student: 'student',
@@ -134,7 +135,7 @@ class LoggedIn extends Component {
             case TAB_OPTIONS.join_rso:
                 return <RSOs user={user} />;
             case TAB_OPTIONS.show_events:
-                return <div>Show events here!</div>;
+                return <Events user={user} />;
             case TAB_OPTIONS.create_event:
                 return <div>Create an event here!</div>;
             case TAB_OPTIONS.show_account:
