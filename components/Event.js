@@ -20,7 +20,6 @@ const Event = props => {
         lastName,
         email,
     } = props.eventInfo;
-    console.log('props.eventInfo', props.eventInfo);
     return (
         <Card>
             <CardContent>

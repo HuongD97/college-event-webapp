@@ -18,7 +18,6 @@ class PrivateEvents extends Component {
             const res = await axios.post('/privateEvents', {
                 university: this.state.user.university,
             });
-            console.log('res is', res);
 
             this.setState({ privateEvents: res.data.privateEvents });
         } catch (e) {
@@ -27,7 +26,6 @@ class PrivateEvents extends Component {
     }
 
     render() {
-        console.log('this.state.privateEvents', this.state.privateEvents);
         return (
             <Card>
                 <CardHeader title={'Private Events'} />
