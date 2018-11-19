@@ -9,6 +9,7 @@ const jsonParser = bodyParser.json();
 
 const Users = require('./model/Users');
 const RSOs = require('./model/RSOs');
+const Events = require('./model/Events');
 const database = require('./db');
 
 const handle = app.getRequestHandler();
@@ -110,8 +111,17 @@ app.prepare()
             });
         });
 
-        server.get('/test', (req, res) => {
+        server.get('/publicEvents', (req, res) => {
+            Events.getAllPublicEvents((err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ publicEvents: data });
+                }
+            });
         });
+
+        server.get('/test', (req, res) => {});
 
         server.get('/', (req, res) => app.render(req, res, '/index'));
 
