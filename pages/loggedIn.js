@@ -127,7 +127,7 @@ class LoggedIn extends Component {
     };
 
     renderTab = () => {
-        const user = assign({}, pick(this.state, ['firstName', 'lastName', 'university', 'role', 'email']));
+        const user = assign({}, pick(this.state, ['firstName', 'lastName', 'university', 'role', 'email', 'uid']));
         switch (this.state.currentTab) {
             case TAB_OPTIONS.create_rso:
                 return <CreateRSOs user={user}/>;
