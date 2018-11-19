@@ -112,15 +112,6 @@ app.prepare()
         });
 
         server.get('/test', (req, res) => {
-            // RSOs.addAdmin(
-            //     'Lz06QvpZyhfjqpLgyGDV1E51Ety2',
-            //     (err, data, fields, anythingelse) => {
-            //         console.log('err', err);
-            //         console.log('data', data);
-            //         if (err) res.json(err);
-            //         else res.json({ rso: data, fields: fields, anythingelse: anythingelse});
-            //     },
-            // );
         });
 
         server.get('/', (req, res) => app.render(req, res, '/index'));
