@@ -121,6 +121,17 @@ app.prepare()
             });
         });
 
+        server.post('/privateEvents', jsonParser, (req, res) => {
+            const { university } = req.body;
+            Events.getAllPrivateEvents(university, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ privateEvents: data });
+                }
+            });
+        });
+
         server.get('/test', (req, res) => {});
 
         server.get('/', (req, res) => app.render(req, res, '/index'));

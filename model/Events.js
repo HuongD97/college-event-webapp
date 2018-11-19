@@ -25,3 +25,22 @@ exports.getAllPublicEvents = callback => {
         }
     });
 };
+
+exports.getAllPrivateEvents = (university, callback) => {
+    if (!university) callback(`No university provided!`);
+    else {
+        const query = `select * from Private_events p, Events e, Locations l, Admins a, Users u
+    where l.university = '${university}' and
+      e.event_id=p.private_event_id and
+      l.location_id = e.event_location and
+      p.admin_id = a.admin_id and
+      a.admin_id = u.uid;`;
+
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
+    }
+};
