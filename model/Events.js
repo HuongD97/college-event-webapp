@@ -44,3 +44,24 @@ exports.getAllPrivateEvents = (university, callback) => {
         });
     }
 };
+
+exports.getAllStudentRSOEvents = (uid, callback) => {
+    if (!uid) callback(`No uid provided!`);
+    else {
+        const query = `select * from RSO_events r_event, Users u, RSO_membership mem, Events e, Admins a, Locations l, RSOs r
+            where u.uid='${uid}' and
+            mem.student_id=u.uid and
+            r_event.rso_id = mem.rso_id and
+            l.location_id=e.event_location and
+            r_event.rso_event_id=e.event_id and
+            r_event.admin_id=a.admin_id and
+            r.rso_id = r_event.rso_id`;
+
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        })
+    }
+};

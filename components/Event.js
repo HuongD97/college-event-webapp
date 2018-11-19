@@ -19,6 +19,7 @@ const Event = props => {
         firstName,
         lastName,
         email,
+        rso_name,
     } = props.eventInfo;
     return (
         <Card>
@@ -35,6 +36,11 @@ const Event = props => {
                 <Typography component="p">
                     Description: <b>{event_description}</b>
                 </Typography>
+                {rso_name ? (
+                    <Typography component="p">
+                        RSO: <b>{rso_name}</b>
+                    </Typography>
+                ) : null}
                 <Typography component="p">
                     Contact name: <b>{`${firstName} ${lastName}`}</b>
                 </Typography>

@@ -132,6 +132,17 @@ app.prepare()
             });
         });
 
+        server.post('/rsoEvents', jsonParser, (req, res) => {
+            const { uid } = req.body;
+            Events.getAllStudentRSOEvents(uid, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ rsoEvents: data });
+                }
+            });
+        });
+
         server.get('/test', (req, res) => {});
 
         server.get('/', (req, res) => app.render(req, res, '/index'));

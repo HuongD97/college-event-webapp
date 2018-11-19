@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import PublicEvents from './PublicEvents';
 import Break from './Break';
 import PrivateEvents from './PrivateEvents';
+import RSOEvents from './RSOEvents';
 
 class Events extends Component {
     constructor(props) {
@@ -18,6 +19,8 @@ class Events extends Component {
                 <PublicEvents user={this.state.user} />
                 <Break height={15} />
                 <PrivateEvents user={this.state.user} />
+                <Break height={15} />
+                <RSOEvents user={this.state.user} />
             </div>
         );
     }
