@@ -63,6 +63,17 @@ app.prepare()
             });
         });
 
+        server.post('/userRSOs', jsonParser, (req, res) => {
+            const { uid } = req.body;
+            RSOs.getAllRSOsThatStudentBelongTo(uid, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ userRSOs: data });
+                }
+            });
+        });
+
         server.post('/createRSO', jsonParser, (req, res) => {
             const rsoInfo = { ...req.body.rsoInfo };
 
