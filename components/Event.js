@@ -86,7 +86,6 @@ const Comment = props => {
                 content: comment,
                 rating: rating,
             };
-            console.log('payload', payload);
             const res = await axios.post('/updateComment', { ...payload });
             if (!res.data.success) {
                 throw `Unable to save comment and rating changes to the database`;
