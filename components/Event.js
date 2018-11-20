@@ -37,7 +37,7 @@ const Comment = props => {
     const [comment, setComment] = useState('');
     const [rating, setRating] = useState('');
     const [editing, setEditing] = useState(false);
-    const [saving, setSaving] = useState(false);
+    const [refresh, setRefresh] = useState(false);
 
     // Asynchronous function to update user's comment
     const getUserCommentAndRatingForEvent = async () => {
@@ -63,8 +63,9 @@ const Comment = props => {
             setCommentAndRating({ comment: content, rating: rating });
             setComment(content);
             setRating(rating);
+            setRefresh(false);
         });
-    }, []);
+    }, [refresh]);
 
     const Edit = () => {
         return (
@@ -78,12 +79,47 @@ const Comment = props => {
         );
     };
 
+    const handleSave = async () => {
+        try {
+            setLoading(true);
+            const payload = {
+                uid: uid,
+                event_id: event_id,
+                content: comment,
+                rating: rating,
+            };
+            const res = await axios.post('/updateComment', { ...payload });
+            if (!res.data.success) {
+                throw `Unable to save comment and rating changes to the database`;
+            }
+
+            setEditing(false);
+            setLoading(false);
+            setRefresh(true);
+        } catch (e) {
+            setLoading(false);
+            console.error(e);
+        }
+    };
+
+    const handleChange = name => event => {
+        switch (name) {
+            case 'comment':
+                setComment(event.target.value);
+                break;
+            case 'rating':
+                setRating(event.target.value);
+                break;
+        }
+    };
+
     const Save = () => {
         return (
             <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => console.log('saving')}
+                onClick={() => handleSave()}
+                disabled={loading}
             >
                 Save
             </Button>
@@ -96,7 +132,7 @@ const Comment = props => {
                 variant="outlined"
                 color="secondary"
                 onClick={() => console.log('deleting')}
-                disabled={saving}
+                disabled={loading}
             >
                 Delete
             </Button>
@@ -108,7 +144,7 @@ const Comment = props => {
             <Button
                 variant="outlined"
                 onClick={() => setEditing(false)}
-                disabled={saving}
+                disabled={loading}
             >
                 Cancel
             </Button>
@@ -124,16 +160,6 @@ const Comment = props => {
     };
 
     const renderEditView = () => {
-        const handleChange = name => event => {
-            switch (name) {
-                case 'comment':
-                    setComment(event.target.value);
-                    break;
-                case 'rating':
-                    setRating(event.target.value);
-                    break;
-            }
-        };
         return (
             <div
                 style={{
