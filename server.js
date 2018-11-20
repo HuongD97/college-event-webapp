@@ -154,6 +154,39 @@ app.prepare()
             });
         });
 
+        server.post('/userComment', jsonParser, (req, res) => {
+            const { uid, event_id } = req.body;
+            Events.getUserComment(uid, event_id, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ userComment: data });
+                }
+            });
+        });
+
+        server.post('/updateComment', jsonParser, (req, res) => {
+            const { uid, event_id, content, rating } = req.body;
+            Events.updateComment(uid, event_id, content, rating, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ success: true });
+                }
+            });
+        });
+
+        server.post('/deleteComment', jsonParser, (req, res) => {
+            const { uid, event_id } = req.body;
+            Events.deleteComment(uid, event_id, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ success: true });
+                }
+            });
+        });
+
         server.get('/test', (req, res) => {});
 
         server.get('/', (req, res) => app.render(req, res, '/index'));
