@@ -284,7 +284,6 @@ class CreateEvents extends Component {
 
     render() {
         const { classes } = this.props;
-        console.log('state is', this.state);
         return (
             <FormContainer
                 title="Create a New Event"
