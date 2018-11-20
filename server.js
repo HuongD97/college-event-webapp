@@ -109,6 +109,18 @@ app.prepare()
             });
         });
 
+        server.post('/createEvent', jsonParser, (req, res) => {
+            const { eventForm } = req.body;
+
+            Events.createEvent(eventForm, err => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ success: true });
+                }
+            });
+        });
+
         server.post('/user', jsonParser, (req, res) => {
             const { uid } = req.body;
             if (!uid) {

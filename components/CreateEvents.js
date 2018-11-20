@@ -20,6 +20,7 @@ import Radio from '@material-ui/core/Radio';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import map from 'lodash/map';
+import pick from 'lodash/pick';
 import SuccessMessage from './Success';
 
 const styles = theme => ({
@@ -82,14 +83,53 @@ class CreateEvents extends Component {
     };
 
     validateForm = () => {
-        const errorMessage = `Please fill out all fields of the form. You must pick an RSO if the event is an RSO.`;
-        const validation = map(
-            this.state.form,
-            property => property.length > 0,
-        );
+        const defaultPrompt = `Please fill out all fields of the form.`;
+        const { event_type } = this.state.form;
+        let formToValidate;
+        if (
+            event_type === 'public' ||
+            event_type === '' ||
+            event_type === 'private'
+        ) {
+            formToValidate = pick(this.state.form, [
+                'event_name',
+                'event_description',
+                'event_location_id',
+                'event_type',
+                'admin_id',
+                'event_time',
+            ]);
+        } else if (event_type === 'rso') {
+            formToValidate = pick(this.state.form, [
+                'event_name',
+                'event_description',
+                'event_location_id',
+                'event_type',
+                'admin_id',
+                'rso_id',
+                'event_time',
+            ]);
+        }
+
+        const validation = map(formToValidate, property => {
+            return property !== '';
+        });
 
         if (validation.includes(false)) {
-            this.setState({ errorMessage: errorMessage });
+            if (
+                event_type === 'public' ||
+                event_type === '' ||
+                event_type === 'private'
+            ) {
+                this.setState({ errorMessage: defaultPrompt });
+            } else {
+                // RSO event
+                this.setState({
+                    errorMessage:
+                        defaultPrompt +
+                        ' RSO events must be associated with an RSO.',
+                });
+            }
             return false;
         }
 
@@ -99,31 +139,38 @@ class CreateEvents extends Component {
 
     handleSubmit = async () => {
         try {
-            this.setState({ loading: true });
             const validation = this.validateForm();
 
             if (validation) {
-                const result = await axios.post('/createRSO', {
-                    rsoInfo: { ...this.state.form },
+                let eventForm = { ...this.state.form };
+                eventForm.rso_id = parseInt(eventForm.rso_id, 10);
+                const result = await axios.post('/createEvent', {
+                    eventForm: eventForm,
                 });
 
                 if (result.data.success) {
                     this.setState({
-                        successMessage: `Successfully created new RSO: ${
-                            result.data.rso_name
+                        successMessage: `Successfully created new event: ${
+                            this.state.form.event_name
                         }`,
                     });
+                } else if (result.data.code === 'ER_DUP_ENTRY') {
+                    this.setState({
+                        successMessage: '',
+                        errorMessage: `There is already an event happening at the same date and location. 
+                            Please pick another date or another location to host your event`,
+                    });
                 } else {
-                    throw `Unable to create new RSO`;
+                    this.setState({
+                        successMessage: '',
+                        errorMessage: 'Unable to create new event',
+                    });
                 }
             }
-
-            this.setState({ loading: false });
         } catch (err) {
-            console.error('Error creating new RSO', err);
+            console.error('Error creating new event', err);
             this.setState({
                 errorMessage: err && err.message ? `${err.message}` : err,
-                loading: false,
             });
         }
     };
@@ -291,6 +338,7 @@ class CreateEvents extends Component {
                 <InputLabel htmlFor="students-selector">Location</InputLabel>
                 <Break height={15} />
                 {this.renderLocationChoices()}
+                <Break height={15} />
                 <ErrorMessage message={this.state.errorMessage} />
                 <SuccessMessage message={this.state.successMessage} />
                 <Button

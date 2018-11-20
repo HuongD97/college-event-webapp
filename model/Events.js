@@ -187,15 +187,14 @@ exports.getLocationID = (university, location_name, callback) => {
 };
 
 exports.getAllLocations = callback => {
-  const query = `select * from Locations`;
-  db.get().query(query, (err, results) => {
-    if (err) callback(err);
-    else {
-      callback(null, results);
-    }
-  });
+    const query = `select * from Locations`;
+    db.get().query(query, (err, results) => {
+        if (err) callback(err);
+        else {
+            callback(null, results);
+        }
+    });
 };
-
 
 exports.getAllLocationsForUniversity = (university, callback) => {
     if (!university) {
@@ -206,6 +205,85 @@ exports.getAllLocationsForUniversity = (university, callback) => {
             if (err) callback(err);
             else {
                 callback(null, results);
+            }
+        });
+    }
+};
+
+const getEventID = (
+    event_name,
+    event_description,
+    event_location_id,
+    callback,
+) => {
+    if (!event_name || !event_description || !event_location_id) {
+        callback(`Need more information`);
+    } else {
+        const query = `select event_id from Events where event_name='${event_name}' and event_description='${event_description}' and event_location=${event_location_id}`;
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
+    }
+};
+
+exports.createEvent = (eventForm, callback) => {
+    if (!eventForm) {
+        callback(`Please provide information to create event!`);
+    } else {
+        const {
+            event_type,
+            event_name,
+            event_description,
+            event_location_id,
+            admin_id,
+            rso_id,
+            approved,
+            event_time,
+        } = eventForm;
+
+        const createEventQuery = `insert into Events (event_name, event_location, event_time, event_description)
+values ('${event_name}', ${event_location_id}, '${moment(event_time).format(
+            'YYYY-MM-DD HH:mm:ss',
+        )}', '${event_description}')
+`;
+        db.get().query(createEventQuery, (err, results) => {
+            if (err) callback(err);
+            else {
+                getEventID(
+                    event_name,
+                    event_description,
+                    event_location_id,
+                    (err, results) => {
+                        if (err) callback(err);
+                        else {
+                            const { event_id } = results[0];
+                            let addToEventTypeQuery;
+                            if (event_type === 'rso') {
+                                addToEventTypeQuery = `insert into RSO_events (rso_event_id, admin_id, rso_id) values (${event_id}, '${admin_id}', ${rso_id})`;
+                            } else if (event_type === 'private') {
+                                addToEventTypeQuery = `insert into Private_events (private_event_id, admin_id) values (${event_id}, '${admin_id}')`;
+                            } else if (event_type === 'public') {
+                                addToEventTypeQuery = `insert into Public_events (public_event_id, approved, admin_id) values(${event_id}, 1, '${admin_id}')`;
+                            } else {
+                                callback(
+                                    `Event type must be public, private, or rso`,
+                                );
+                            }
+                            db.get().query(
+                                addToEventTypeQuery,
+                                (err, results) => {
+                                    if (err) callback(err);
+                                    else {
+                                        callback(null, results);
+                                    }
+                                },
+                            );
+                        }
+                    },
+                );
             }
         });
     }
