@@ -11,6 +11,7 @@ import { signOut } from '../services/accounts';
 import CreateRSOs from '../components/CreateRSOs';
 import RSOs from '../components/RSOs';
 import Events from '../components/Events';
+import CreateEvents from '../components/CreateEvents';
 
 const ROLE_OPTIONS = {
     student: 'student',
@@ -128,16 +129,26 @@ class LoggedIn extends Component {
     };
 
     renderTab = () => {
-        const user = assign({}, pick(this.state, ['firstName', 'lastName', 'university', 'role', 'email', 'uid']));
+        const user = assign(
+            {},
+            pick(this.state, [
+                'firstName',
+                'lastName',
+                'university',
+                'role',
+                'email',
+                'uid',
+            ]),
+        );
         switch (this.state.currentTab) {
             case TAB_OPTIONS.create_rso:
-                return <CreateRSOs user={user}/>;
+                return <CreateRSOs user={user} />;
             case TAB_OPTIONS.join_rso:
                 return <RSOs user={user} />;
             case TAB_OPTIONS.show_events:
                 return <Events user={user} />;
             case TAB_OPTIONS.create_event:
-                return <div>Create an event here!</div>;
+                return <CreateEvents user={user} />;
             case TAB_OPTIONS.show_account:
                 return (
                     <div style={{ margin: '0px', padding: '0px' }}>
