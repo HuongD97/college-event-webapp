@@ -4,16 +4,6 @@ const Users = require('./Users');
 const RSOs = require('./RSOs');
 const moment = require('moment');
 
-// const {
-//   event_name,
-//   event_location,
-//   event_time,
-//   event_description,
-//   event_id,
-//   admin_id,
-//   admin_email,
-//   event_comment,
-// } = props.eventInfo;
 exports.getAllPublicEvents = callback => {
     const query = `select * 
     from Events e, Public_events p, Locations l, Admins a, Users u
@@ -107,7 +97,9 @@ exports.updateComment = (uid, event_id, content, rating, callback) => {
             else {
                 // If comment exists, then update it
                 if (data.length === 1) {
-                    const updateQuery = `update Comments set content='${content}', rating=${rating}, dateUpdated='${moment().format("YYYY-MM-DD HH:mm:ss")}' where userID='${uid}' and eventID=${event_id}`;
+                    const updateQuery = `update Comments set content='${content}', rating=${rating}, dateUpdated='${moment().format(
+                        'YYYY-MM-DD HH:mm:ss',
+                    )}' where userID='${uid}' and eventID=${event_id}`;
 
                     db.get().query(updateQuery, (err, results) => {
                         if (err) callback(err);
@@ -117,7 +109,9 @@ exports.updateComment = (uid, event_id, content, rating, callback) => {
                     });
                 } else {
                     // If comment does not exist, then add it
-                    const addQuery = `insert into Comments (userID, eventID, content, rating, dateUpdated) values ('${uid}', ${event_id}, '${content}', ${rating}, '${moment().format("YYYY-MM-DD HH:mm:ss")}');`;
+                    const addQuery = `insert into Comments (userID, eventID, content, rating, dateUpdated) values ('${uid}', ${event_id}, '${content}', ${rating}, '${moment().format(
+                        'YYYY-MM-DD HH:mm:ss',
+                    )}');`;
                     db.get().query(addQuery, (err, results) => {
                         if (err) callback(err);
                         else {
@@ -135,6 +129,68 @@ exports.deleteComment = (uid, event_id, callback) => {
     else {
         const query = `delete from Comments where userID='${uid}' and eventID=${event_id}`;
 
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
+    }
+};
+
+exports.getAllUniversities = callback => {
+    const query = `select distinct university from Users`;
+    db.get().query(query, (err, results) => {
+        if (err) callback(err);
+        else {
+            callback(null, results);
+        }
+    });
+};
+
+exports.addLocation = (
+    location_name,
+    university,
+    longitude,
+    latitude,
+    callback,
+) => {
+    if (!location_name || !university || !longitude || !latitude) {
+        callback(
+            `No location_name, university, longitude, or latitude provided!`,
+        );
+    } else {
+        const query = `insert into Locations (location_name, university, longitude, latitude)
+values ('${location_name}', '${university}', ${longitude}, ${latitude})`;
+
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
+    }
+};
+
+exports.getLocationID = (university, location_name, callback) => {
+    if (!university || !location_name) {
+        callback(`No university or location_name provided!`);
+    } else {
+        const query = `select location_id from Locations where university='${university}' and location_name='${location_name}'`;
+        db.get().query(query, (err, results) => {
+            if (err) callback(err);
+            else {
+                callback(null, results);
+            }
+        });
+    }
+};
+
+exports.getAllLocationsForUniversity = (university, callback) => {
+    if (!university) {
+        callback(`No university provided!`);
+    } else {
+        const query = `select location_name from Locations where university='${university}'`;
         db.get().query(query, (err, results) => {
             if (err) callback(err);
             else {
