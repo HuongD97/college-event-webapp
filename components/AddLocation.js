@@ -4,6 +4,7 @@ import Break from './Break';
 import axios from 'axios/index';
 import Success from './Success';
 import Error from './Error';
+import FormContainer from './FormContainer';
 
 const AddLocation = props => {
     const [location_name, setLocationName] = useState('');
@@ -93,14 +94,7 @@ const AddLocation = props => {
 
     const renderAddLocationForm = () => {
         return (
-            <div
-                style={{
-                    borderStyle: 'solid',
-                    borderWidth: '0.5px',
-                    padding: '20px',
-                    borderRadius: '20px',
-                }}
-            >
+            <FormContainer title="Add New Location" minWidth={'400px'}>
                 <Break height={15} />
                 <TextField
                     label="Location Name"
@@ -153,7 +147,7 @@ const AddLocation = props => {
                 <Error message={errorMessage} />
                 <Break height={15} />
                 <Save />
-            </div>
+            </FormContainer>
         );
     };
 
