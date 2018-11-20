@@ -15,16 +15,11 @@ import {
 import Break from './Break';
 import moment from 'moment';
 import axios from 'axios/index';
-// import classNames from 'classnames';
 
 const formatDateAndTime = timestamp => {
     return moment(timestamp).format('MMMM Do YYYY, h:mm:ss a');
 };
-const styles = {
-    textField: {
-        flexBasis: 100,
-    },
-};
+
 const Comment = props => {
     const { event_id } = props.eventInfo;
     const { uid } = props.user;
@@ -35,7 +30,7 @@ const Comment = props => {
         rating: -1,
     });
     const [comment, setComment] = useState('');
-    const [rating, setRating] = useState('');
+    const [rating, setRating] = useState(-1);
     const [editing, setEditing] = useState(false);
     const [refresh, setRefresh] = useState(false);
 
@@ -54,18 +49,21 @@ const Comment = props => {
     };
 
     // Fetch the user's comment and update state
-    useEffect(() => {
-        getUserCommentAndRatingForEvent().then(userFeedback => {
-            const { content, rating } = userFeedback || {
-                content: '',
-                rating: -1,
-            };
-            setCommentAndRating({ comment: content, rating: rating });
-            setComment(content);
-            setRating(rating);
-            setRefresh(false);
-        });
-    }, [refresh]);
+    useEffect(
+        () => {
+            getUserCommentAndRatingForEvent().then(userFeedback => {
+                const { content, rating } = userFeedback || {
+                    content: '',
+                    rating: -1,
+                };
+                setCommentAndRating({ comment: content, rating: rating });
+                setComment(content);
+                setRating(rating);
+                setRefresh(false);
+            });
+        },
+        [refresh],
+    );
 
     const Edit = () => {
         return (
@@ -88,14 +86,36 @@ const Comment = props => {
                 content: comment,
                 rating: rating,
             };
+            console.log('payload', payload);
             const res = await axios.post('/updateComment', { ...payload });
             if (!res.data.success) {
                 throw `Unable to save comment and rating changes to the database`;
             }
 
-            setEditing(false);
             setLoading(false);
             setRefresh(true);
+            setEditing(false);
+        } catch (e) {
+            setLoading(false);
+            console.error(e);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            setLoading(true);
+            const payload = {
+                uid: uid,
+                event_id: event_id,
+            };
+            const res = await axios.post('/deleteComment', { ...payload });
+            if (!res.data.success) {
+                throw `Unable to delete comment from database.`;
+            }
+
+            setLoading(false);
+            setRefresh(true);
+            setEditing(false);
         } catch (e) {
             setLoading(false);
             console.error(e);
@@ -131,7 +151,7 @@ const Comment = props => {
             <Button
                 variant="outlined"
                 color="secondary"
-                onClick={() => console.log('deleting')}
+                onClick={() => handleDelete()}
                 disabled={loading}
             >
                 Delete
