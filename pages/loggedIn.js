@@ -12,6 +12,7 @@ import CreateRSOs from '../components/CreateRSOs';
 import RSOs from '../components/RSOs';
 import Events from '../components/Events';
 import CreateEvents from '../components/CreateEvents';
+import AddLocation from '../components/AddLocation';
 
 const ROLE_OPTIONS = {
     student: 'student',
@@ -30,6 +31,7 @@ const TAB_OPTIONS = {
     create_event: 'create_event',
     show_events: 'show_events',
     show_account: 'show_account',
+    addLocation: 'add_location',
 };
 
 class LoggedIn extends Component {
@@ -84,6 +86,8 @@ class LoggedIn extends Component {
         const { role } = this.state;
         const createEvent =
             role === ROLE_OPTIONS.superadmin || role === ROLE_OPTIONS.admin;
+        const createLocation =
+            role === ROLE_OPTIONS.superadmin || role === ROLE_OPTIONS.admin;
 
         return (
             <AppBar position="static">
@@ -112,6 +116,14 @@ class LoggedIn extends Component {
                             onClick={this.switch(TAB_OPTIONS.create_event)}
                         >
                             Create Event
+                        </Button>
+                    ) : null}
+                    {createLocation ? (
+                        <Button
+                            color="inherit"
+                            onClick={this.switch(TAB_OPTIONS.addLocation)}
+                        >
+                            Add Location
                         </Button>
                     ) : null}
                     <Button
@@ -156,6 +168,8 @@ class LoggedIn extends Component {
                         <Break height={15} />
                     </div>
                 );
+            case TAB_OPTIONS.addLocation:
+                return <AddLocation />;
             default:
                 return null;
         }
