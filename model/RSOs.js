@@ -136,3 +136,16 @@ exports.joinRSO = (uid, rso_id, callback) => {
         });
     }
 };
+
+exports.getAdminRSOs = (admin_id, callback) => {
+    if (!admin_id) callback(`No admin_id provided!`);
+    else {
+        const query = `select * from RSOs where admin_id='${admin_id}'`;
+        db.get().query(query, (err, res) => {
+            if (err) callback(err);
+            else {
+                callback(null, res);
+            }
+        });
+    }
+};

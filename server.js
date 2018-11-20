@@ -86,6 +86,17 @@ app.prepare()
             });
         });
 
+        server.post('/adminRSOs', jsonParser, (req, res) => {
+            const { uid } = req.body;
+
+            RSOs.getAdminRSOs(uid, (err, data) => {
+                if (err) {
+                    res.status(500).json(err);
+                } else {
+                    res.json({ adminRSOs: data });
+                }
+            });
+        });
         server.post('/createRSO', jsonParser, (req, res) => {
             const rsoInfo = { ...req.body.rsoInfo };
 
@@ -199,6 +210,16 @@ app.prepare()
                     res.json(err);
                 } else {
                     res.json({ allUniversities: data });
+                }
+            });
+        });
+
+        server.get('/getAllLocations', (req, res) => {
+            Events.getAllLocations((err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ allLocations: data });
                 }
             });
         });

@@ -186,6 +186,17 @@ exports.getLocationID = (university, location_name, callback) => {
     }
 };
 
+exports.getAllLocations = callback => {
+  const query = `select * from Locations`;
+  db.get().query(query, (err, results) => {
+    if (err) callback(err);
+    else {
+      callback(null, results);
+    }
+  });
+};
+
+
 exports.getAllLocationsForUniversity = (university, callback) => {
     if (!university) {
         callback(`No university provided!`);
