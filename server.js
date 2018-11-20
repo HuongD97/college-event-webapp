@@ -167,13 +167,19 @@ app.prepare()
 
         server.post('/updateComment', jsonParser, (req, res) => {
             const { uid, event_id, content, rating } = req.body;
-            Events.updateComment(uid, event_id, content, rating, (err, data) => {
-                if (err) {
-                    res.json(err);
-                } else {
-                    res.json({ success: true });
-                }
-            });
+            Events.updateComment(
+                uid,
+                event_id,
+                content,
+                rating,
+                (err, data) => {
+                    if (err) {
+                        res.json(err);
+                    } else {
+                        res.json({ success: true });
+                    }
+                },
+            );
         });
 
         server.post('/deleteComment', jsonParser, (req, res) => {
@@ -187,6 +193,54 @@ app.prepare()
             });
         });
 
+        server.get('/getAllUniversities', (req, res) => {
+            Events.getAllUniversities((err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ allUniversities: data });
+                }
+            });
+        });
+
+        server.post('/getAllLocationsForUniversity', jsonParser, (req, res) => {
+            const { university } = req.body;
+            Events.getAllLocationsForUniversity(university, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ allLocationsForUniversity: data });
+                }
+            });
+        });
+
+        server.post('/getLocationID', jsonParser, (req, res) => {
+            const { university, location_name } = req.body;
+            Events.getLocationID(university, location_name, (err, data) => {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json({ location: data[0] });
+                }
+            });
+        });
+
+        server.post('/addLocation', jsonParser, (req, res) => {
+            const { location_name, university, longitude, latitude } = req.body;
+            Events.addLocation(
+                location_name,
+                university,
+                longitude,
+                latitude,
+                (err, data) => {
+                    if (err) {
+                        res.json(err);
+                    } else {
+                        res.json({ success: true });
+                    }
+                },
+            );
+        });
         server.get('/test', (req, res) => {});
 
         server.get('/', (req, res) => app.render(req, res, '/index'));
