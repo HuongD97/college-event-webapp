@@ -32,7 +32,7 @@ class RSOEvents extends Component {
                     <Event
                         key={rsoEvent.rso_event_id}
                         eventInfo={rsoEvent}
-                        userComments={this.props.userComments}
+                        user={this.state.user}
                     />
                 ))}
             </Card>
@@ -42,7 +42,6 @@ class RSOEvents extends Component {
 
 RSOEvents.propTypes = {
     user: PropTypes.object.isRequired,
-    userComments: PropTypes.object.isRequired,
 };
 
 export default RSOEvents;

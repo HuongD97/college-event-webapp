@@ -37,6 +37,7 @@ class PublicEvents extends Component {
                     <Event
                         key={publicEvent.public_event_id}
                         eventInfo={publicEvent}
+                        user={this.state.user}
                     />
                 ))}
             </Card>

@@ -33,6 +33,7 @@ class PrivateEvents extends Component {
                     <Event
                         key={privateEvent.private_event_id}
                         eventInfo={privateEvent}
+                        user={this.state.user}
                     />
                 ))}
             </Card>
