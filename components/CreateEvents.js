@@ -39,12 +39,11 @@ class CreateEvents extends Component {
                 event_name: '',
                 event_description: '',
                 event_location_id: '',
-                event_location_name: '',
                 event_type: '',
                 admin_id: '',
                 rso_id: '',
                 approved: true,
-                event_time: '',
+                event_time: '2018-11-20T20:00',
             },
             rsoChoices: [],
             locationChoices: [],
@@ -83,16 +82,13 @@ class CreateEvents extends Component {
     };
 
     validateForm = () => {
-        const errorMessage = `Please fill out all fields of the form. You also must select at least 5 members to be in the new RSO.`;
+        const errorMessage = `Please fill out all fields of the form. You must pick an RSO if the event is an RSO.`;
         const validation = map(
             this.state.form,
             property => property.length > 0,
         );
 
-        if (
-            validation.includes(false) ||
-            this.state.form.rso_members.length < 5
-        ) {
+        if (validation.includes(false)) {
             this.setState({ errorMessage: errorMessage });
             return false;
         }
@@ -210,7 +206,10 @@ class CreateEvents extends Component {
         let { locationChoices } = this.state;
 
         // Filter out places that are not happening in this university
-        if (this.state.form.event_type === 'private') {
+        if (
+            this.state.form.event_type === 'private' ||
+            this.state.form.event_type === 'rso'
+        ) {
             locationChoices = locationChoices.filter(
                 loc => loc.university === this.state.user.university,
             );
