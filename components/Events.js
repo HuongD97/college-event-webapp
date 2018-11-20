@@ -4,37 +4,23 @@ import PublicEvents from './PublicEvents';
 import Break from './Break';
 import PrivateEvents from './PrivateEvents';
 import RSOEvents from './RSOEvents';
-import axios from 'axios';
 
 class Events extends Component {
     constructor(props) {
         super(props);
         this.state = {
             user: props.user,
-            userComments: [],
         };
     }
 
-    async componentDidMount() {
-        try {
-            const res = await axios.post('/userComments', {
-                uid: this.state.user.uid,
-            });
-            this.setState({ userComments: res.data.userComments });
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
     render() {
-        const { userComments } = this.state;
         return (
             <div>
-                <PublicEvents user={this.state.user} userComments={userComments} />
+                <PublicEvents user={this.state.user} />
                 <Break height={15} />
-                <PrivateEvents user={this.state.user} userComments={userComments}/>
+                <PrivateEvents user={this.state.user} />
                 <Break height={15} />
-                <RSOEvents user={this.state.user} userComments={userComments}/>
+                <RSOEvents user={this.state.user} />
             </div>
         );
     }
